@@ -2,14 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec_helper'))
 
 describe Castronaut do
   
-  describe 'Logger' do
-    
-    it 'has a logger for the CAS functionality'
-    
-    it 'has a logger for the Sintra server'
-    
-  end
-  
   describe "Utilities" do
     
     describe "Random string generation" do
