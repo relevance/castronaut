@@ -12,27 +12,27 @@ describe Castronaut::Configuration do
     it "defaults the config file path to ./castronaut.yml if none is given" do
       Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
       Castronaut::Configuration.any_instance.stubs(:parse_yaml_config).returns({})
-      Castronaut::Configuration.any_instance.stubs(:setup_logger)
+      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
       Castronaut::Configuration.new.config_file_path.should == './castronaut.yml'
     end
 
     it "uses whatever file path is passed to it as the alternate path" do
       Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
       Castronaut::Configuration.any_instance.stubs(:parse_yaml_config).returns({})
-      Castronaut::Configuration.any_instance.stubs(:setup_logger)
+      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
       Castronaut::Configuration.new("/foo/bar/baz").config_file_path.should == '/foo/bar/baz'
     end
         
     it "parses the file with YAML::load_file into a hash" do
       Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
-      Castronaut::Configuration.any_instance.stubs(:setup_logger)
+      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
       Castronaut::Configuration.new(@test_config_file).config_file_path.should include('castronaut.example.yml')
     end
     
     it "exposes the loaded YAML config at :config_hash" do
       Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
       Castronaut::Configuration.any_instance.stubs(:parse_yaml_config).returns(:config_hash)
-      Castronaut::Configuration.any_instance.stubs(:setup_logger)
+      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
       Castronaut::Configuration.new(@test_config_file).config_hash.should == :config_hash
     end
     

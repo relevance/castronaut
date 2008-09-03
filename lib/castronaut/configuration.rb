@@ -13,7 +13,8 @@ module Castronaut
       @config_file_path = config_file_path
       @config_hash = parse_yaml_config(@config_file_path)
       parse_config_into_settings(@config_hash)
-      @logger = setup_logger
+      @logger = setup_logger      
+      debug_initialize if logger.debug?
     end
     
     private
@@ -35,6 +36,13 @@ module Castronaut
         log = Logger.new("#{log_directory}/castronaut.log", "daily")
         log.level = eval(log_level)
         log
+      end
+      
+      def debug_initialize
+        logger.debug "#{self.class} - initialized with parameters:"
+        config_hash.each_pair do |key, value|
+          logger.debug "--> #{key} = #{value.inspect}"
+        end
       end
   end
   

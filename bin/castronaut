@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'castronaut'))
+
+$castronaut_config = Castronaut::Configuration.new('./castronaut.example.yml')
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../vendor/sinatra/lib')
 require 'sinatra'
 
