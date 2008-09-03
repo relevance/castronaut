@@ -1,0 +1,23 @@
+organization_name: Foo Bar Baz Industries, LLC Inc. A division of Holdings Co.
+
+# The port the CAS webserver will start on
+server_port: 4567
+
+log_directory: log
+
+log_level: debug
+
+ssl_enabled: false
+
+cas_database:
+  adapter: sqlite3
+  database: db/cas.db
+  timeout: 5000
+
+cas_adapter:
+  site_key: 03523your093023site0985225key098290here9
+  digest_stretches: 10
+  database:
+    adapter: sqlite3
+    database: db/cas_adapter.db
+    timeout: 5000

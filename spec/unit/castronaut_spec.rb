@@ -2,30 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec_helper'))
 
 describe Castronaut do
   
-  describe 'Configuration' do
-    
-    it "loads the yaml configuration from the default path"
-
-    describe "the configuration file" do
-      
-      it "allows setting of the port number"
-
-      it "allows setting of the log file path"
-      
-      it "allows setting of the default log level"
-
-      it "allows setting of ssl options"
-
-      it "requires setting of the CAS database configuration"    
-      
-      it "requires setting of the CAS adapter database configuration"
-      
-      it "allows setting of the organization name"
-            
-    end
-    
-  end
-  
   describe 'Logger' do
     
     it 'has a logger for the CAS functionality'
