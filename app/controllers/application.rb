@@ -1,5 +1,28 @@
-#require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'vendor', 'sinatra', 'lib', 'sinatra'))
 
 get '/' do
-  body 'Hello world!'
+
+end
+
+get '/login' do
+
+end
+
+post '/login' do
+
+end
+
+get '/validate' do
+  
+end
+
+get '/serviceValidate' do
+  
+end
+
+get '/loginTicket' do
+  
+end
+
+post '/loginTicket' do
+  
 end

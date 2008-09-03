@@ -170,10 +170,4 @@ describe Castronaut do
     
   end
   
-  describe "Controllers" do
-    
-    it "matches the current URL scheme from rubycas-server"
-    
-  end
-
 end
