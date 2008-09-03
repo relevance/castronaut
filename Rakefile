@@ -41,13 +41,14 @@ else
     t.spec_files = FileList['spec/**/*.rb']
     t.rcov = true
     t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library']
+    t.spec_opts = ['-cfn']
   end
  
   desc "Run all examples"
   Spec::Rake::SpecTask.new('spec') do |t|
     t.spec_files = FileList['spec/**/*.rb']
     t.rcov = false
-    t.spec_opts = ['-cfs']
+    t.spec_opts = ['-cfn']
   end
 end
  
