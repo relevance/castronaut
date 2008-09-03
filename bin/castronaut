@@ -4,17 +4,5 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'castronaut'))
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '../vendor/sinatra/lib')
 require 'sinatra'
 
-configure do
-  root = File.expand_path(File.dirname(__FILE__) + '../')
-  set_option :views, File.join(root, 'app', 'views')
-
-  # Load the configuration file.
-  # if !File.exist?('config.yml')
-  #   puts "There's no configuration file at config.yml!"
-  #   exit!
-  # end
-  # CONFIG = YAML.load_file('config.yml')
-
-end
-
+load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config.rb'))
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application.rb'))
