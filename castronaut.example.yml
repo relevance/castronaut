@@ -5,7 +5,7 @@ server_port: 4567
 
 log_directory: log
 
-log_level: debug
+log_level: Logger::DEBUG
 
 ssl_enabled: false
 

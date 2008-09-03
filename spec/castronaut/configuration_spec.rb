@@ -43,10 +43,25 @@ describe Castronaut::Configuration do
     end
     
     it "creates an instance of Logger pointing to the log directory" do
-      Logger.expects(:new).with("log/castronaut.log")
+      Logger.expects(:new).with("log/castronaut.log", anything).returns(stub_everything)
       
       Castronaut::Configuration.new(@test_config_file)
     end
+    
+    it "exposes the logger at :logger" do
+      Castronaut::Configuration.new(@test_config_file).logger.should_not be_nil
+    end
+    
+    it "sets the loggers level from the configuration" do
+      Castronaut::Configuration.new(@test_config_file).logger.level.should == Logger::DEBUG
+    end
+    
+    it "rotates the logger daily" do
+      Logger.expects(:new).with("log/castronaut.log", "daily").returns(stub_everything)
+      
+      Castronaut::Configuration.new(@test_config_file)
+    end
+        
   end
   
   describe "configuration settings" do

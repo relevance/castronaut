@@ -1,18 +1,19 @@
 require 'yaml'
 require 'logger'
 require 'fileutils'
+
 module Castronaut
 
   class Configuration
     DefaultConfigFilePath = './castronaut.yml'
     
-    attr_accessor :config_file_path, :config_hash
+    attr_accessor :config_file_path, :config_hash, :logger
     
     def initialize(config_file_path = Castronaut::Configuration::DefaultConfigFilePath)
       @config_file_path = config_file_path
       @config_hash = parse_yaml_config(@config_file_path)
       parse_config_into_settings(@config_hash)
-      setup_logger
+      @logger = setup_logger
     end
     
     private
@@ -31,7 +32,9 @@ module Castronaut
       
       def setup_logger
         create_log_directory(log_directory)
-        Logger.new("#{log_directory}/castronaut.log")
+        log = Logger.new("#{log_directory}/castronaut.log", "daily")
+        log.level = eval(log_level)
+        log
       end
   end
   
