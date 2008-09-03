@@ -1,8 +1,15 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'castronaut'))
-$LOAD_PATH.unshift(File.dirname(__FILE__) + '../vendor/sinatra/lib')
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../vendor/sinatra/lib')
 require 'sinatra'
+
+Sinatra::Application.default_options.merge!(
+  :env => :development,
+  :run => true,
+  :raise_errors => true,
+  :logging => true
+)
 
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config.rb'))
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application.rb'))
