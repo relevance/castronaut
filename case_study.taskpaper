@@ -1,2 +1,4 @@
 Castronaut:
-- Generate specifications for needed entities and behaviours of existing rubycas-server in RSpec
+✓ Generate specifications for needed entities and behaviours of existing rubycas-server in RSpec
+- Setup base sinatra app in gem
+
