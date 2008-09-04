@@ -67,11 +67,9 @@ describe 'Castronaut Application Controller' do
     describe "when a redirection loop is detected" do
 
       it "sets a display message for the view" do
-        pending do
-          get_it '/login', 'redirection_loop_intercepted' => 'any old thing'
+        get_it '/login', 'redirection_loop_intercepted' => 'any old thing'
 
-          body.should include("The client and server are unable to negotiate authentication.")
-        end
+        body.should include("The client and server are unable to negotiate authentication.")
       end
 
     end

@@ -9,9 +9,10 @@ end
 get '/login' do
   no_cache
 
-  erb :login,
-      :locals => { :message => @message }
+  @presenter = Castronaut::LoginPresenter.new(self)
+  @presenter.validate
 
+  erb :login, :locals => { :presenter => @presenter }
 end
 
 post '/login' do
