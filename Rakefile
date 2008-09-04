@@ -40,7 +40,7 @@ else
   Spec::Rake::SpecTask.new('cruise') do |t|
     t.spec_files = FileList['spec/**/*.rb']
     t.rcov = true
-    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library']
+    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library', '--text-report']
     t.spec_opts = ['-cfn']
   end
  
