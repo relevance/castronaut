@@ -42,23 +42,23 @@ describe 'Castronaut Application Controller' do
       headers['Expires'].should == "Wed, 01 Jan 2003 00:00:00 -0500"
     end
     
-    it "gets the service from params[:service]" 
+    xit "gets the service from params[:service]" 
     
-    it "gets renewal? from params[:renew]" 
+    xit "gets renewal? from params[:renew]" 
     
-    it "determines if this is a gateway? from params[:gateway]" 
+    xit "determines if this is a gateway? from params[:gateway]" 
     
     describe "when you have a ticket generating ticket cookie" do
       
-      it "validates it using the ticket generating ticket validator"
+      xit "validates it using the ticket generating ticket validator" 
       
-      it "returns the validator object"
+      xit "returns the validator object"
       
-      it "returns whether or not an error occured during validation"
+      xit "returns whether or not an error occured during validation"
       
       describe "when there was an error validating" do
         
-        it "sets a display message for the view"
+        xit "sets a display message for the view"
         
       end
       
@@ -66,7 +66,11 @@ describe 'Castronaut Application Controller' do
     
     describe "when a redirection loop is detected" do
       
-      it "sets a display message for the view"
+      it "sets a display message for the view" do
+        get_it '/login', 'redirection_loop_intercepted' => 'any old thing'
+        
+        body.should include("The client and server are unable to negotiate authentication.")
+      end
       
     end
     

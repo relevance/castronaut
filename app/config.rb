@@ -1,12 +1,14 @@
 configure do
-  root = File.expand_path(File.dirname(__FILE__) + '../')
-  set_option :views, File.join(root, 'app', 'views')
+  root = File.expand_path(File.join(File.dirname(__FILE__), '..', 'app'))
+  views = "#{root}/views"
+  pub_dir = "#{root}/public"
 
-  # Load the configuration file.
-  # if !File.exist?('config.yml')
-  #   puts "There's no configuration file at config.yml!"
-  #   exit!
-  # end
-  # CONFIG = YAML.load_file('config.yml')
+  $cas_config.logger.debug "Sinatra Config - setting root path to #{root}"
+  $cas_config.logger.debug "Sinatra Config - setting views path to #{views}"
+  $cas_config.logger.debug "Sinatra Config - setting public path to #{pub_dir}"
+
+  set_options :root => root,
+              :views => views,
+              :public => pub_dir
 
 end

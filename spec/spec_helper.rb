@@ -9,7 +9,6 @@ gem :mocha, '>= 0.9.0'
 
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
 
-
 Spec::Runner.configure do |config|
 
   config.mock_with :mocha
