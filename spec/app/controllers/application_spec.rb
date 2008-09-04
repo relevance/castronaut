@@ -42,6 +42,34 @@ describe 'Castronaut Application Controller' do
       headers['Expires'].should == "Wed, 01 Jan 2003 00:00:00 -0500"
     end
     
+    it "gets the service from params[:service]" 
+    
+    it "gets renewal? from params[:renew]" 
+    
+    it "determines if this is a gateway? from params[:gateway]" 
+    
+    describe "when you have a ticket generating ticket cookie" do
+      
+      it "validates it using the ticket generating ticket validator"
+      
+      it "returns the validator object"
+      
+      it "returns whether or not an error occured during validation"
+      
+      describe "when there was an error validating" do
+        
+        it "sets a display message for the view"
+        
+      end
+      
+    end
+    
+    describe "when a redirection loop is detected" do
+      
+      it "sets a display message for the view"
+      
+    end
+    
   end
   
   describe "requesting /login via POST" do  
