@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'castronaut'))
-
-$cas_config = Castronaut::Configuration.new('./castronaut.example.yml')
-
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../vendor/sinatra/lib')
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../vendor/rack/lib')
+
+require 'rack'
 require 'sinatra'
+
+$cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
 
 Sinatra::Application.default_options.merge!(
   :env => $cas_config.environment.to_sym,
@@ -14,8 +16,8 @@ Sinatra::Application.default_options.merge!(
   :logging => true
 )
 
-$cas_config.logger.info("Sinatra - Loading app/config.rb") if $cas_config.logger.info?
+$cas_config.logger.debug("Sinatra - Loading app/config.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config.rb'))
 
-$cas_config.logger.info("Sinatra - Loading app/application.rb") if $cas_config.logger.info?
+$cas_config.logger.debug("Sinatra - Loading app/application.rb") 
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application.rb'))
