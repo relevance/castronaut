@@ -3,7 +3,7 @@ before do
 end
 
 get '/' do
-  
+  redirect '/login'
 end
 
 get '/login' do

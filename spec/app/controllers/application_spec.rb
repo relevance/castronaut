@@ -3,10 +3,14 @@ require 'spec/interop/test'
  
 describe 'Castronaut Application Controller' do
   
-  it 'handles GET requests to /' do
-    get_it '/'
+  describe "requesting / via GET" do
     
-    status.should == 200
+    it "redirects to /login" do
+      get_it '/'
+      
+      should be_redirection
+    end
+    
   end
   
   describe "requesting /login via GET" do
@@ -14,7 +18,7 @@ describe 'Castronaut Application Controller' do
     it "responds with status 200" do
       get_it '/login'
       
-      status.should == 200
+      should be_ok
     end
     
     it "sets the Pragma header to 'no-cache'" do
@@ -39,35 +43,55 @@ describe 'Castronaut Application Controller' do
     end
     
   end
+  
+  describe "requesting /login via POST" do  
+
+    it 'responds with status 200' do
+      post_it '/login'
     
-  it 'handles POST requests to /login' do
-    post_it '/login'
-    
-    status.should == 200
+      should be_ok
+    end
+
   end
 
-  it 'handles GET requests to /validate' do
-    get_it '/validate'
+  describe "requesting /validate via GET" do  
+
+    it 'responds with status 200' do
+      get_it '/validate'
     
-    status.should == 200
+      should be_ok
+    end
+  
   end
   
-  it 'handles GET requests to /serviceValidate' do
-    get_it '/serviceValidate'
+  describe "requesting /serviceValidate via GET" do  
+
+    it 'responds with status 200' do
+      get_it '/serviceValidate'
     
-    status.should == 200
+      should be_ok
+    end
+    
   end
   
-  it 'handles GET requests to /loginTicket' do
-    get_it '/loginTicket'
+  describe "requesting /loginTicket via GET" do  
+
+    it 'responds with status 200' do
+      get_it '/loginTicket'
     
-    status.should == 200
-  end
+      should be_ok
+    end
+
+  end  
   
-  it 'handles POST requests to /loginTicket' do
-    post_it '/loginTicket'
+  describe "requesting /loginTicket via POST" do  
+
+    it 'responds with status 200' do
+      post_it '/loginTicket'
     
-    status.should == 200
+      should be_ok
+    end
+  
   end
   
 end
