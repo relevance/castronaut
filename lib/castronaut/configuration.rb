@@ -39,10 +39,11 @@ module Castronaut
       end
       
       def debug_initialize
-        logger.debug "#{self.class} - initialized with parameters:"
+        logger.debug "#{self.class} - initializing with parameters"
         config_hash.each_pair do |key, value|
           logger.debug "--> #{key} = #{value.inspect}"
         end
+        logger.debug "#{self.class} - initialization complete"
       end
   end
   

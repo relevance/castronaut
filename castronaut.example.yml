@@ -1,5 +1,6 @@
 organization_name: Foo Bar Baz Industries, LLC Inc. A division of Holdings Co.
 
+environment: development
 # The port the CAS webserver will start on
 server_port: 4567
 

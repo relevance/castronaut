@@ -74,7 +74,7 @@ describe Castronaut::Configuration do
       @yml_config.should_not be_nil
     end
 
-    %w{organization_name server_port log_directory log_level ssl_enabled cas_database cas_adapter}.each do |config_setting|
+    %w{organization_name environment server_port log_directory log_level ssl_enabled cas_database cas_adapter}.each do |config_setting|
       
       describe config_setting do
         
