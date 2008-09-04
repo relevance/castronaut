@@ -13,7 +13,7 @@ Sinatra::Application.default_options.merge!(
   :logging => false
 )
 
-$cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+load_cas_config
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application'))

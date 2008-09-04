@@ -14,3 +14,7 @@ Spec::Runner.configure do |config|
   config.mock_with :mocha
 
 end
+
+def load_cas_config
+  $cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+end
