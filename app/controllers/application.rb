@@ -8,26 +8,10 @@ end
 
 get '/login' do
   no_cache
-  
-  @service = params['service']
-  @renewal = params['renew']
-  @gateway = ['1', 'true'].include?(params['gateway'])
-  
-  if tgt_cookie = request.cookies['tgt']
-    ticket_generating_ticket, ticket_generating_ticket_error = validate_ticket_granting_ticket(tgt_cookie)
-    
-    if ticket_generating_ticket && !ticket_generating_ticket_error
-      @message = "You are currently logged in as #{ticket_generating_ticket.username}.  If this is not you, please log in below."
-    end
-  end
-  
-  if params['redirection_loop_intercepted']
-    @message = 'The client and server are unable to negotiate authentication.  Please try logging in again later.'
-  end
-  
-  erb :login, 
-      :locals => { :message => @message }      
-      
+
+  erb :login,
+      :locals => { :message => @message }
+
 end
 
 post '/login' do
