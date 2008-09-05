@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../vendor/isaac/crypt/ISA
 
 module Castronaut
   class RandomString
-    MagicNumber = 4294619050
+    MagicNumber = 4_294_619_050
     
     def self.generate(max_length = 29)
       isaac = ::Crypt::ISAAC.new
