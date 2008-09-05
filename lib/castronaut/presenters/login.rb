@@ -36,10 +36,10 @@ module Castronaut
       end
 
       def validate
-        ticket_granting_ticket, ticket_granting_ticket_error = validate_ticket_granting_ticket(ticket_generating_ticket_cookie)
+        ticket_granting_ticket_result = Castronaut::Ticket.validate_ticket_granting_ticket(ticket_generating_ticket_cookie)
 
-        if ticket_granting_ticket && !ticket_granting_ticket_error
-          messages << "You are currently logged in as #{ticket_granting_ticket.username}.  If this is not you, please log in below."
+        if ticket_granting_ticket_result.valid?
+          messages << "You are currently logged in as #{ticket_granting_ticket_result.username}.  If this is not you, please log in below."
         end
 
         if redirection_loop?
@@ -47,8 +47,8 @@ module Castronaut
         end
 
         if service
-          if !renewal && ticket_granting_ticket && !ticket_granting_ticket_error
-            service_ticket = generate_service_ticket(service, ticket_granting_ticket.username, ticket_granting_ticket)
+          if !renewal && ticket_granting_ticket_result.valid?
+            service_ticket = generate_service_ticket(service, ticket_granting_ticket_result.username, ticket_granting_ticket_result.ticket)
             service_with_ticket = service_uri_with_ticket(service, service_ticket)
             return controller.redirect(service, 303)
           end
@@ -60,10 +60,6 @@ module Castronaut
       end
 
       private
-
-      def validate_ticket_granting_ticket(cookie_to_validate)
-
-      end
 
       def generate_service_ticket(service, username, ticket_generating_ticket)
 

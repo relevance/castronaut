@@ -1,6 +1,10 @@
 module Castronaut
   class TicketGrantingTicket
 
+    def self.find_by_ticket(ticket)
+      
+    end
+    
     #TODO: implement when needed
     def expired?
 

@@ -2,7 +2,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 require 'yaml'
 
 describe Castronaut::Presenters::Login do
-
+  
+  before(:all) do
+    load_cas_config
+  end
+  
   before do
     @controller = mock('controller')
     @controller.stubs(:params).returns({})
@@ -50,13 +54,13 @@ describe Castronaut::Presenters::Login do
 
     it "validates the ticket generating ticket" do
       @controller.request.cookies['tgt'] = 'fake cookie'
-      Castronaut::Presenters::Login.any_instance.expects(:validate_ticket_granting_ticket).with('fake cookie')
+      Castronaut::Ticket.expects(:validate_ticket_granting_ticket).with('fake cookie').returns(Castronaut::TicketResult.new(stub_everything))
       Castronaut::Presenters::Login.new(@controller).validate
     end
 
     it "adds a notification message if you get a ticket generating ticket without error" do
       @controller.request.cookies['tgt'] = 'fake cookie'
-      Castronaut::Presenters::Login.any_instance.stubs(:validate_ticket_granting_ticket).returns(stub_everything(:username => 'Bob'), false)
+      Castronaut::Ticket.expects(:validate_ticket_granting_ticket).with('fake cookie').returns(Castronaut::TicketResult.new(stub_everything(:username => 'Bob')))
       Castronaut::Presenters::Login.new(@controller).validate.messages.should include("You are currently logged in as Bob.  If this is not you, please log in below.")
     end
 
@@ -77,7 +81,7 @@ describe Castronaut::Presenters::Login do
       @controller.params['service'] = 'my service'
       @controller.request.cookies['tgt'] = 'tgt'
       @controller.stubs(:redirect)
-      Castronaut::Presenters::Login.any_instance.stubs(:validate_ticket_granting_ticket).returns(stub_everything(:username => 'B'), false)
+      Castronaut::Ticket.expects(:validate_ticket_granting_ticket).returns(Castronaut::TicketResult.new(stub_everything(:username => 'B')))      
     end
 
     describe "when it is not a renewal and there is a ticket generating ticket without an error" do
