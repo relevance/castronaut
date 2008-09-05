@@ -133,6 +133,14 @@ describe Castronaut::Presenters::Login do
     end
 
   end
-
+  
+  describe "login ticket generation" do
+    
+    it "generates a login ticket at the end" do
+      @controller.request.cookies['tgt'] = 'fake cookie'
+      Castronaut::Presenters::Login.new(@controller).ticket_generating_ticket_cookie.should == 'fake cookie'
+    end
+    
+  end
 
 end

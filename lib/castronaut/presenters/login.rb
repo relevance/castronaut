@@ -6,7 +6,7 @@ module Castronaut
       attr_accessor :messages
 
       delegate :params, :request, :to => :controller
-      delegate :cookies, :to => :request
+      delegate :cookies, :env, :to => :request
 
       def initialize(controller)
         @controller = controller
@@ -34,6 +34,14 @@ module Castronaut
       def redirection_loop?
         params.has_key?('redirection_loop_intercepted')
       end
+      
+      def client_host
+        env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
+      end
+      
+      def login_ticket
+        Castronaut::Models::LoginTicket.generate_from(client_host)
+      end
 
       def validate
         ticket_granting_ticket_result = Castronaut::Ticket.validate_ticket_granting_ticket(ticket_generating_ticket_cookie)
@@ -55,7 +63,7 @@ module Castronaut
         elsif gateway?
           messages << "The server cannot fulfill this gateway request because no service parameter was given."
         end
-
+        
         self
       end
 
