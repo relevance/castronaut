@@ -1,12 +1,13 @@
 <% unless presenter.messages.empty? %>
-<h4 class="flash"><%= presenter.messages.to_s %></h4>
+  <h4 class="flash"><%= presenter.messages.to_s %></h4>
 <% end %>
+
 <div id="left">
   <div class="content_div index_div">
     <form method="post" action="/login">
     <p>
       <label for="username">Username</label><br />
-      <input name="username" id="username" type="text" />
+      <input name="username" id="username" type="text" autocomplete="off" />
     </p>
     <p>
       <label for="password">Password</label><br />

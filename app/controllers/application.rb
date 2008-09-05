@@ -9,7 +9,7 @@ end
 get '/login' do
   no_cache
 
-  @presenter = Castronaut::LoginPresenter.new(self)
+  @presenter = Castronaut::Presenters::Login.new(self)
   @presenter.validate
 
   erb :login, :locals => { :presenter => @presenter }
