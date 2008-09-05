@@ -3,6 +3,18 @@
 <% end %>
 <div id="left">
   <div class="content_div index_div">
-    <%#= yield %>
+    <form method="post" action="/login">
+    <p>
+      <label for="username">Username</label><br />
+      <input name="username" id="username" type="text" />
+    </p>
+    <p>
+      <label for="password">Password</label><br />
+      <input name="password" id="password" type="password" />
+    </p>
+    <p>
+      <input type="submit" value="Login" />
+    </p>
+    </form>
   </div>
 </div>

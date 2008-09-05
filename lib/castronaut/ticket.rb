@@ -29,15 +29,15 @@ module Castronaut
     end
 
     def self.log_debug(message)
-      $cas_config.logger.debug("Castronaut::TicketValidator - #{message}")
+      $cas_config.logger.debug("#{self} - #{message}")
     end
 
     def self.log_info(message)
-      $cas_config.logger.info("Castronaut::TicketValidator - #{message}")
+      $cas_config.logger.info("#{self} - #{message}")
     end
 
     def self.log_warn(message)
-      $cas_config.logger.warn("Castronaut::TicketValidator - #{message}")
+      $cas_config.logger.warn("#{self} - #{message}")
     end
 
   end
