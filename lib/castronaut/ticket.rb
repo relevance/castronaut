@@ -28,7 +28,6 @@ module Castronaut
       TicketResult.new(ticket_granting_ticket)
     end
 
-
     def self.log_debug(message)
       $cas_config.logger.debug("Castronaut::TicketValidator - #{message}")
     end
@@ -40,6 +39,7 @@ module Castronaut
     def self.log_warn(message)
       $cas_config.logger.warn("Castronaut::TicketValidator - #{message}")
     end
+
   end
 
 end
