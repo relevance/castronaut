@@ -68,7 +68,7 @@ describe 'Castronaut Application Controller' do
 
       it "sets a display message for the view" do
         get_it '/login', 'redirection_loop_intercepted' => 'any old thing'
-
+        
         body.should include("The client and server are unable to negotiate authentication.")
       end
 

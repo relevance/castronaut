@@ -1,7 +1,3 @@
-before do
-#  $cas_config.logger.info("Castronaut - handling #{request.env['REQUEST_METHOD']} #{request.env['HTTP_HOST']}#{request.env['REQUEST_URI']}") if $cas_config
-end
-
 get '/' do
   redirect '/login'
 end
@@ -10,20 +6,14 @@ get '/login' do
   no_cache
 
   @presenter = Castronaut::Presenters::Login.new(self)
-  @presenter.validate
-
-  erb :login, :locals => { :presenter => @presenter }
+  @presenter.represent!
+  @presenter.your_mission.call
 end
 
 post '/login' do
   @presenter = Castronaut::Presenters::ProcessLogin.new(self)
-  @presenter.validate
-  
-  # if @presenter.valid?
-  #   erb :login, :locals => { :presenter => @presenter }
-  # else
-  #   erb :login, :locals => { :presenter => @presenter }
-  # end
+  @presenter.represent!
+  @presenter.your_mission.call
 end
 
 get '/validate' do

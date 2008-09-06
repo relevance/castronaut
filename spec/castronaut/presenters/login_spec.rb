@@ -11,6 +11,7 @@ describe Castronaut::Presenters::Login do
     @controller = mock('controller')
     @controller.stubs(:params).returns({})
     @controller.stubs(:request).returns(stub(:cookies => {}))
+    @controller.stubs(:erb)
   end
 
   describe "initialization" do
@@ -55,13 +56,13 @@ describe Castronaut::Presenters::Login do
     it "validates the ticket generating ticket" do
       @controller.request.cookies['tgt'] = 'fake cookie'
       Castronaut::Models::TicketGrantingTicket.expects(:validate_cookie).with('fake cookie').returns(Castronaut::TicketResult.new(stub_everything))
-      Castronaut::Presenters::Login.new(@controller).validate
+      Castronaut::Presenters::Login.new(@controller).represent!
     end
 
     it "adds a notification message if you get a ticket generating ticket without error" do
       @controller.request.cookies['tgt'] = 'fake cookie'
       Castronaut::Models::TicketGrantingTicket.expects(:validate_cookie).with('fake cookie').returns(Castronaut::TicketResult.new(stub_everything(:username => 'Bob')))
-      Castronaut::Presenters::Login.new(@controller).validate.messages.should include("You are currently logged in as Bob.  If this is not you, please log in below.")
+      Castronaut::Presenters::Login.new(@controller).represent!.messages.should include("You are currently logged in as Bob.  If this is not you, please log in below.")
     end
 
   end
@@ -70,7 +71,7 @@ describe Castronaut::Presenters::Login do
 
     it "adds a notification message" do
       @controller.params['redirection_loop_intercepted'] = 'redirect me'
-      Castronaut::Presenters::Login.new(@controller).validate.messages.should include("The client and server are unable to negotiate authentication.  Please try logging in again later.")
+      Castronaut::Presenters::Login.new(@controller).represent!.messages.should include("The client and server are unable to negotiate authentication.  Please try logging in again later.")
     end
 
   end
@@ -89,7 +90,7 @@ describe Castronaut::Presenters::Login do
       it "generates a service ticket from the service, ticket generating ticket username, and the ticket generating ticket" do
         Castronaut::Models::ServiceTicket.expects(:generate_ticket_for).with('http://example.com', anything).returns(stub_everything)
 
-        Castronaut::Presenters::Login.new(@controller).validate
+        Castronaut::Presenters::Login.new(@controller).represent!
       end
 
       it "generates a service ticket from the service" do
@@ -97,7 +98,7 @@ describe Castronaut::Presenters::Login do
         service_ticket.service = 'http://example.com'
         Castronaut::Models::ServiceTicket.expects(:generate_ticket_for).with('http://example.com', anything).returns(service_ticket)
 
-        Castronaut::Presenters::Login.new(@controller).validate
+        Castronaut::Presenters::Login.new(@controller).represent!
       end
 
       it "redirects to the service uri(status 303)" do
@@ -109,7 +110,7 @@ describe Castronaut::Presenters::Login do
 
         @controller.expects(:redirect).with('http://example.com', 303)
 
-        Castronaut::Presenters::Login.new(@controller).validate
+        Castronaut::Presenters::Login.new(@controller).represent!
       end
 
     end
@@ -125,7 +126,7 @@ describe Castronaut::Presenters::Login do
         Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).returns(service_ticket)
         service_ticket.stubs(:service_uri).returns('http://example.com')
           
-        Castronaut::Presenters::Login.new(@controller).validate
+        Castronaut::Presenters::Login.new(@controller).represent!
       end
 
     end
@@ -138,7 +139,7 @@ describe Castronaut::Presenters::Login do
         service_ticket.expects(:service_uri).returns(nil)
         Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).with('http://example.com', anything).returns(service_ticket)
 
-        Castronaut::Presenters::Login.new(@controller).validate.messages.should include("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")
+        Castronaut::Presenters::Login.new(@controller).represent!.messages.should include("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")
       end
       
     end
@@ -150,7 +151,7 @@ describe Castronaut::Presenters::Login do
       @controller.params['service'] = nil
       @controller.params['gateway'] = '1'
 
-      Castronaut::Presenters::Login.new(@controller).validate.messages.should include("The server cannot fulfill this gateway request because no service parameter was given.")
+      Castronaut::Presenters::Login.new(@controller).represent!.messages.should include("The server cannot fulfill this gateway request because no service parameter was given.")
     end
 
   end

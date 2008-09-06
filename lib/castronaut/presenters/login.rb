@@ -2,7 +2,7 @@ module Castronaut
   module Presenters
 
     class Login
-      attr_reader :controller
+      attr_reader :controller, :your_mission
       attr_accessor :messages
 
       delegate :params, :request, :to => :controller
@@ -11,6 +11,7 @@ module Castronaut
       def initialize(controller)
         @controller = controller
         @messages = []
+        @your_mission = nil
       end
 
       def service
@@ -43,7 +44,7 @@ module Castronaut
         Castronaut::Models::LoginTicket.generate_from(client_host).ticket
       end
 
-      def validate
+      def represent!
         ticket_granting_ticket_result = Castronaut::Models::TicketGrantingTicket.validate_cookie(ticket_generating_ticket_cookie)
 
         if ticket_granting_ticket_result.valid?
@@ -52,25 +53,29 @@ module Castronaut
 
         if redirection_loop?
           messages << "The client and server are unable to negotiate authentication.  Please try logging in again later."
-        end
+        else
 
-        if service
-          if !renewal && ticket_granting_ticket_result.valid?
-            service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket_result)
+          if service
+            if !renewal && ticket_granting_ticket_result.valid?
+              service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket_result)
             
-            if service_ticket.service_uri
-              return controller.redirect(service_ticket.service_uri, 303)
-            else
-              messages << "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
-            end            
+              if service_ticket.service_uri
+                return controller.redirect(service_ticket.service_uri, 303)
+              else
+                messages << "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
+              end            
+            end
+          elsif gateway?
+            messages << "The server cannot fulfill this gateway request because no service parameter was given."
           end
-        elsif gateway?
-          messages << "The server cannot fulfill this gateway request because no service parameter was given."
+          
         end
         
+        @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
+                
         self
       end
-
+    
     end
 
   end

@@ -2,7 +2,7 @@ module Castronaut
   module Presenters
 
     class ProcessLogin
-      attr_reader :controller
+      attr_reader :controller, :your_mission
       attr_accessor :messages, :login_ticket
 
       delegate :params, :request, :to => :controller
@@ -11,6 +11,7 @@ module Castronaut
       def initialize(controller)
         @controller = controller
         @messages = []
+        @your_mission = nil
       end
 
       def service
@@ -49,7 +50,7 @@ module Castronaut
         params['password']
       end
       
-      def validate
+      def represent!
         @login_ticket = params['lt'] 
         
         login_ticket_validation_result = Castronaut::Models::LoginTicket.validate_ticket(@login_ticket)
@@ -57,8 +58,8 @@ module Castronaut
         if login_ticket_validation_result.invalid?
           messages << login_ticket_validation_result.error_message
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
-
-          return controller.erb :login, :locals => { :presenter => self } # TODO: STATUS 401
+          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401 
+          return self
         end
 
         @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
@@ -75,7 +76,8 @@ module Castronaut
             service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket)
 
             if service_ticket.service_uri
-              return controller.redirect(service_ticket.service_uri, 303)
+              @your_mission = lambda { controller.redirect(service_ticket.service_uri, 303) }
+              return self
             else
               messages << "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
             end
@@ -85,9 +87,10 @@ module Castronaut
 
         else
           messages << authentication_result.error_message
-          return controller.erb :login, :locals => { :presenter => self }
+          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
         end
-
+        
+        self
       end
       
     end
