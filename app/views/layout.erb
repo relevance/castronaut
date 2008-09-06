@@ -6,16 +6,16 @@
   <link href="/stylesheets/screen.css?<%= Time.now.usec %>" media="screen" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<div id="header">
-		<h1 id="wurst"><a href="/login">CAS</a></h1>
-	</div>
-	<div id="anotherline"></div>
-	<div id="two_columns">
-	  <%= yield %>
+  <div id="header">
+    <h1 id="wurst"><a href="/login"><%= $cas_config.organization_name %></a></h1>
+  </div>
+  <div id="anotherline"></div>
+  <div id="two_columns">
+    <%= yield %>
 
-  	<div id="right">
-  	  <%#= yield :sidebar %>
-  	</div>	
+    <div id="right">
+      <%#= yield :sidebar %>
+    </div>
   </div>
 </body>
 </html>
