@@ -17,6 +17,11 @@ module Castronaut
     def valid?
       error_message.nil?
     end
+    
+    def invalid?
+      !valid?
+    end
+    
   end
 
 end

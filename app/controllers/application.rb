@@ -16,7 +16,14 @@ get '/login' do
 end
 
 post '/login' do
-  body 'Login-Post'
+  @presenter = Castronaut::Presenters::ProcessLogin.new(self)
+  @presenter.validate
+  
+  # if @presenter.valid?
+  #   erb :login, :locals => { :presenter => @presenter }
+  # else
+  #   erb :login, :locals => { :presenter => @presenter }
+  # end
 end
 
 get '/validate' do

@@ -1,4 +1,4 @@
 Castronaut:
 ✓ Generate specifications for needed entities and behaviours of existing rubycas-server in RSpec
 - Setup base sinatra app in gem
-
+- We selected presenters vs big controller logic action to make it easier to unit test the important bits.  

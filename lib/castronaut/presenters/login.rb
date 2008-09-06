@@ -40,7 +40,7 @@ module Castronaut
       end
       
       def login_ticket
-        Castronaut::Models::LoginTicket.generate_from(client_host)
+        Castronaut::Models::LoginTicket.generate_from(client_host).ticket
       end
 
       def validate

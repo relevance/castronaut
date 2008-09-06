@@ -25,6 +25,21 @@ module Castronaut
         Castronaut::TicketResult.new(ticket_granting_ticket)
       end
       
+      def self.generate_for(username, client_host)
+        # 3.6 (ticket granting cookie/ticket)
+        ticket_granting_ticket = TicketGrantingTicket.new
+        ticket_granting_ticket.ticket = "TGC-#{Castronaut::RandomString.generate}"
+        ticket_granting_ticket.username = username
+        ticket_granting_ticket.client_hostname = client_host
+        ticket_granting_ticket.save!
+        
+        ticket_granting_ticket
+      end
+      
+      def to_cookie
+        
+      end
+      
     end
     
   end
