@@ -44,7 +44,7 @@ module Castronaut
       end
 
       def validate
-        ticket_granting_ticket_result = Castronaut::Ticket.validate_ticket_granting_ticket(ticket_generating_ticket_cookie)
+        ticket_granting_ticket_result = Castronaut::Models::TicketGrantingTicket.validate_cookie(ticket_generating_ticket_cookie)
 
         if ticket_granting_ticket_result.valid?
           messages << "You are currently logged in as #{ticket_granting_ticket_result.username}.  If this is not you, please log in below."
@@ -56,9 +56,13 @@ module Castronaut
 
         if service
           if !renewal && ticket_granting_ticket_result.valid?
-            service_ticket = generate_service_ticket(service, ticket_granting_ticket_result.username, ticket_granting_ticket_result.ticket)
-            service_with_ticket = service_uri_with_ticket(service, service_ticket)
-            return controller.redirect(service, 303)
+            service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket_result)
+            
+            if service_ticket.service_uri
+              return controller.redirect(service_ticket.service_uri, 303)
+            else
+              messages << "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
+            end            
           end
         elsif gateway?
           messages << "The server cannot fulfill this gateway request because no service parameter was given."
@@ -67,15 +71,6 @@ module Castronaut
         self
       end
 
-      private
-
-      def generate_service_ticket(service, username, ticket_generating_ticket)
-
-      end
-
-      def service_uri_with_ticket(service, service_ticket)
-
-      end
     end
 
   end
