@@ -24,5 +24,6 @@ configure do
   end
 
   ActiveRecord::Base.logger = Logger.new(STDERR)
+  ActiveRecord::Base.colorize_logging = false
   ActiveRecord::Migrator.migrate('lib/castronaut/db', ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
 end
