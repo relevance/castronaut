@@ -114,14 +114,4 @@ describe Castronaut do
 
   end
 
-  describe "Rake tasks" do
-
-    describe "SSL Certificate Generation" do
-
-      it "generates a self-signed ssl cert for use in dev mode [nth]"
-
-    end
-
-  end
-
 end
