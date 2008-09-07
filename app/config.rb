@@ -13,15 +13,11 @@ configure do
 
   FileUtils.mkdir_p('db') unless File.exist?('db')
 
-  $cas_config.cas_adapter.each do |key,value|
-    if key == "database"
-      ActiveRecord::Base.establish_connection(
-        value.each do |key, value|
-          "#{key.to_sym} => #{value.to_s}"
-        end
-      )
+  ActiveRecord::Base.establish_connection(
+    $cas_config.cas_database.each do |key,value|
+      "#{key.to_sym} => #{value.to_s}"
     end
-  end
+  )
 
   ActiveRecord::Base.logger = Logger.new(STDERR)
   ActiveRecord::Base.colorize_logging = false
