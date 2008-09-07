@@ -14,16 +14,6 @@ describe Castronaut do
 
   end
 
-  describe 'Server' do
-
-    describe "Command line runner" do
-
-      it "allows you to specify the path to the config file as a command-line option"
-
-    end
-
-  end
-
   describe "Ticket Generators" do
 
     describe 'Login Ticket' do
