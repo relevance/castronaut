@@ -11,4 +11,16 @@ configure do
               :views => views,
               :public => pub_dir
 
+  $cas_config.cas_adapter.each do |key,value|
+    if key == "database"
+      ActiveRecord::Base.establish_connection(
+        value.each do |key, value|
+          "#{key.to_sym} => #{value.to_s}"
+        end
+      )
+    end
+  end
+
+  ActiveRecord::Base.logger = Logger.new(STDERR)
+  ActiveRecord::Migrator.migrate('lib/castronaut/db', ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
 end
