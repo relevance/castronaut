@@ -1,7 +1,7 @@
 module Castronaut
   module Adapters
 
-    def selected_adapter
+    def self.selected_adapter
       Castronaut::Adapters::RestfulAuthentication
     end
     

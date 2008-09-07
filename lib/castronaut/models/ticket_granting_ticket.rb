@@ -5,6 +5,9 @@ module Castronaut
       include Castronaut::Models::Consumeable
       include Castronaut::Models::Dispenser
       
+      before_validation :dispense_ticket, :if => :new_record?
+      validates_presence_of :ticket, :username
+      
       def self.validate_cookie(ticket_cookie)
         Castronaut.logger.debug("#{self} - Validating ticket granting ticket for #{ticket_cookie}")
 

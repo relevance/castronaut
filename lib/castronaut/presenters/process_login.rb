@@ -55,7 +55,7 @@ module Castronaut
         
         login_ticket_validation_result = Castronaut::Models::LoginTicket.validate_ticket(@login_ticket)
 
-        if login_ticket_validation_result.invalid?
+        if login_ticket_validation_result && login_ticket_validation_result.invalid?
           messages << login_ticket_validation_result.error_message
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401 
@@ -75,7 +75,7 @@ module Castronaut
           if service
             service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket)
 
-            if service_ticket.service_uri
+            if service_ticket && service_ticket.service_uri
               @your_mission = lambda { controller.redirect(service_ticket.service_uri, 303) }
               return self
             else
@@ -87,6 +87,9 @@ module Castronaut
 
         else
           messages << authentication_result.error_message
+        end
+        
+        if messages.any?
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
         end
         
