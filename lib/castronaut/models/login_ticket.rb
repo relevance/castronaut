@@ -11,7 +11,7 @@ module Castronaut
 
       def self.generate_from(client_host)
         login_ticket = LoginTicket.new
-        login_ticket.ticket = "LT-#{Castronaut::RandomString.generate}"
+        login_ticket.ticket = "LT-#{Castronaut::Utilities::RandomString.generate}"
         login_ticket.client_hostname = client_host
         login_ticket.save!
         login_ticket

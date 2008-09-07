@@ -4,12 +4,6 @@ describe Castronaut do
 
   describe "Utilities" do
 
-    describe "Random string generation" do
-
-      it "generates random string with a given length using ISAAC"
-
-    end
-
     describe "Clean service url [phase2]" do
 
       it "strips duplicate recognized keys keeping only the first from the querystring"
