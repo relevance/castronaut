@@ -37,10 +37,10 @@ if !defined?(Spec)
   puts "spec and cruise targets require RSpec"
 else
   desc "Run all examples with RCov"
-  Spec::Rake::SpecTask.new('cruise') do |t|
+  Spec::Rake::SpecTask.new('coverage') do |t|
     t.spec_files = FileList['spec/**/*.rb']
     t.rcov = true
-    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library', '--text-report']
+    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library,lib/castronaut/db', '--text-report']
     t.spec_opts = ['-cfn']
   end
  
@@ -52,4 +52,4 @@ else
   end
 end
  
-task :default => [:cruise]
+task :default => [:coverage]
