@@ -37,8 +37,6 @@ module Castronaut
       def expired?
         #Time.now - lt.created_on < CASServer::Conf.login_ticket_expiry
       end
-
-
  
     end
 

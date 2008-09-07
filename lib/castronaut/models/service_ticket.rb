@@ -8,6 +8,8 @@ module Castronaut
       include Castronaut::Models::Consumeable
       include Castronaut::Models::Dispenser
       
+      belongs_to :ticket_granting_ticket, :foreign_key => :tgt_id
+      
       before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :client_hostname, :service, :username
 
@@ -16,6 +18,8 @@ module Castronaut
         # ticket_result
         # ticket = ticket_result.ticket
         # username = ticket_result.username
+        
+         # 3.1 (service ticket)
       end
 
       # Note: URI.parse is prone to throwing up exceptions if it doesn't like what it sees.
@@ -39,11 +43,7 @@ module Castronaut
           # TODO: Log message
         end
       end
-
-      private
-        def set_ticket
-          write_attribute :ticket, "ST-#{Castronaut::Utilities::RandomString.generate}"
-        end
+      
     end
 
   end
