@@ -6,8 +6,22 @@ $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../vendor/rack/lib')
 
 require 'rack'
 require 'sinatra'
+require 'optparse'
 
-$cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: castronaut -C /path/to/config/file"
+
+  opts.on("-C", "--config", "Config File") do |c|
+    options[:config_file] = ARGV[0]
+  end
+end.parse!
+
+if options[:config_file]
+  $cas_config ||= Castronaut::Configuration.new(options[:config_file])
+else
+  $cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+end
 
 Sinatra::Application.default_options.merge!(
   :env => $cas_config.environment.to_sym,
@@ -19,5 +33,5 @@ Sinatra::Application.default_options.merge!(
 $cas_config.logger.debug("Sinatra - Loading app/config.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config.rb'))
 
-$cas_config.logger.debug("Sinatra - Loading app/application.rb") 
+$cas_config.logger.debug("Sinatra - Loading app/application.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application.rb'))
