@@ -9,5 +9,16 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presen
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'process_login'))
 
 module Castronaut
+  @cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+  def self.config
+    @cas_config
+  end
 
+  def self.config=(config)
+    @cas_config = config
+  end
+
+  def self.logger
+    @cas_config.logger
+  end
 end

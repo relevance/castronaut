@@ -2,10 +2,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Castronaut::TicketResult do
   
-  before(:all) do
-    load_cas_config
-  end
-  
   it "exposes the given ticket at :ticket" do
     Castronaut::TicketResult.new('ticket').ticket.should == 'ticket'
   end

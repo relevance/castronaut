@@ -15,6 +15,7 @@ module Castronaut
       parse_config_into_settings(@config_hash)
       @logger = setup_logger      
       debug_initialize if logger.debug?
+      connect_activerecord
     end
     
     private
@@ -27,12 +28,12 @@ module Castronaut
         self.extend mod
       end    
       
-      def create_log_directory(dir)
+      def create_directory(dir)
         FileUtils.mkdir_p(dir) unless File.exist?(dir)
       end
       
       def setup_logger
-        create_log_directory(log_directory)
+        create_directory(log_directory)
         log = Logger.new("#{log_directory}/castronaut.log", "daily")
         log.level = eval(log_level)
         log
@@ -44,6 +45,16 @@ module Castronaut
           logger.debug "--> #{key} = #{value.inspect}"
         end
         logger.debug "#{self.class} - initialization complete"
+      end
+
+      def connect_activerecord
+        create_directory('db')
+
+        ActiveRecord::Base.establish_connection(cas_database)
+
+        ActiveRecord::Base.logger = Logger.new("#{log_directory}/castronaut.activerecord.log", "daily")
+        ActiveRecord::Base.colorize_logging = false
+        ActiveRecord::Migrator.migrate('lib/castronaut/db', ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
       end
   end
   

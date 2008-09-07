@@ -3,10 +3,6 @@ require 'yaml'
 
 describe Castronaut::Presenters::Login do
   
-  before(:all) do
-    load_cas_config
-  end
-  
   before do
     @controller = mock('controller')
     @controller.stubs(:params).returns({})

@@ -18,20 +18,18 @@ OptionParser.new do |opts|
 end.parse!
 
 if options[:config_file]
-  $cas_config ||= Castronaut::Configuration.new(options[:config_file])
-else
-  $cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+  Castronaut.config = Castronaut::Configuration.new(options[:config_file])
 end
 
 Sinatra::Application.default_options.merge!(
-  :env => $cas_config.environment.to_sym,
+  :env => Castronaut.config.environment.to_sym,
   :run => true,
   :raise_errors => true,
   :logging => true
 )
 
-$cas_config.logger.debug("Sinatra - Loading app/config.rb")
+Castronaut.logger.debug("Sinatra - Loading app/config.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config.rb'))
 
-$cas_config.logger.debug("Sinatra - Loading app/application.rb")
+Castronaut.logger.debug("Sinatra - Loading app/application.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application.rb'))

@@ -18,17 +18,7 @@ describe Castronaut do
 
     describe 'Login Ticket' do
 
-      it "generates a new Ticket"
-
-      it "has a random ticket attribute generated using ISAAC"
-
-      it "captures the client hostname on the ticket"
-
       it "can be marked as consumed/used"
-
-      describe "Validations" do
-
-      end
 
     end
 

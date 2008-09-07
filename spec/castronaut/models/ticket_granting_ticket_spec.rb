@@ -2,10 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 
 describe Castronaut::Models::TicketGrantingTicket do
   
-  before(:all) do
-     load_cas_config
-   end
-
    describe "validating ticket granting ticket" do
 
      describe "when given no ticket" do

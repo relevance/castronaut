@@ -16,19 +16,19 @@ describe 'Castronaut Application Controller' do
   describe "requesting /login via GET" do
 
     it "responds with status 200" do
-      get_it '/login'
+      get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
 
     it "sets the Pragma header to 'no-cache'" do
-      get_it '/login'
+      get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       headers['Pragma'].should == 'no-cache'
     end
 
     it "sets the Cache-Control header to 'no-store'" do
-      get_it '/login'
+      get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       headers['Cache-Control'].should == 'no-store'
     end
@@ -37,7 +37,7 @@ describe 'Castronaut Application Controller' do
       now = Time.parse("01/01/2008")
       Time.stubs(:now).returns(now)
 
-      get_it '/login'
+      get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       headers['Expires'].should == "Wed, 01 Jan 2003 00:00:00 -0500"
     end
@@ -67,7 +67,7 @@ describe 'Castronaut Application Controller' do
     describe "when a redirection loop is detected" do
 
       it "sets a display message for the view" do
-        get_it '/login', 'redirection_loop_intercepted' => 'any old thing'
+        get_it '/login', 'redirection_loop_intercepted' => 'any old thing', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
         
         body.should include("The client and server are unable to negotiate authentication.")
       end
@@ -79,7 +79,7 @@ describe 'Castronaut Application Controller' do
   describe "requesting /login via POST" do
 
     it 'responds with status 200' do
-      post_it '/login'
+      post_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
@@ -89,7 +89,7 @@ describe 'Castronaut Application Controller' do
   describe "requesting /validate via GET" do
 
     it 'responds with status 200' do
-      get_it '/validate'
+      get_it '/validate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
@@ -99,7 +99,7 @@ describe 'Castronaut Application Controller' do
   describe "requesting /serviceValidate via GET" do
 
     it 'responds with status 200' do
-      get_it '/serviceValidate'
+      get_it '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
@@ -109,7 +109,7 @@ describe 'Castronaut Application Controller' do
   describe "requesting /loginTicket via GET" do
 
     it 'responds with status 200' do
-      get_it '/loginTicket'
+      get_it '/loginTicket', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
@@ -119,7 +119,7 @@ describe 'Castronaut Application Controller' do
   describe "requesting /loginTicket via POST" do
 
     it 'responds with status 200' do
-      post_it '/loginTicket'
+      post_it '/loginTicket', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end

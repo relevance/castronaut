@@ -1162,7 +1162,7 @@ module Sinatra
     # pipeline.
     def optional_middleware
       [
-        # ([ Rack::CommonLogger,    [$cas_config.logger], nil ] if options.logging),
+        # ([ Rack::CommonLogger,    [Castronaut.logger], nil ] if options.logging),
         ([ Rack::CommonLogger,    [], nil ] if options.logging),
         ([ Rack::Session::Cookie, [], nil ] if options.sessions)
       ].compact

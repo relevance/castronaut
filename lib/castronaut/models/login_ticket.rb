@@ -6,14 +6,12 @@ module Castronaut
       InvalidMessage = "The login ticket you provided is invalid. Please try logging in again."
       AlreadyConsumedMessage = "The login ticket you provided has already been used up. Please try logging in again."
       ExpiredMessage = "Your login ticket has expired. Please try logging in again."
-
-      attr_accessor :ticket, :client_hostname
+      
+      before_validation :set_ticket, :if => :new_record?
+      validates_presence_of :ticket, :client_hostname 
 
       def self.generate_from(client_host)
-        login_ticket = Castronaut::Models::LoginTicket.new :client_hostname => client_host
-        login_ticket.ticket = "LT-#{Castronaut::Utilities::RandomString.generate}"
-        login_ticket.save!
-        login_ticket
+        create! :client_hostname => client_host
       end
 
       def self.validate_ticket(ticket)
@@ -37,14 +35,14 @@ module Castronaut
         #Time.now - lt.created_on < CASServer::Conf.login_ticket_expiry
       end
 
-      def save!
-
-      end
-
       def consume!
 
       end
 
+      private
+        def set_ticket
+          write_attribute :ticket, "LT-#{Castronaut::Utilities::RandomString.generate}"
+        end
     end
 
   end

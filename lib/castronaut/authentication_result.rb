@@ -9,7 +9,7 @@ module Castronaut
       @service = service
       @environment = environment
       @error_message = error_message
-      $cas_config.logger.info("#{self.class} - #{@error_message} for #{@username} on #{@service}") if @error_message && @service
+      Castronaut.logger.info("#{self.class} - #{@error_message} for #{@username} on #{@service}") if @error_message && @service
     end
     
     def valid?

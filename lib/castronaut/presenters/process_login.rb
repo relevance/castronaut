@@ -64,7 +64,7 @@ module Castronaut
 
         @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
 
-        $cas_config.logger.info("#{self.class} - Logging in with username: #{username}, login ticket: #{login_ticket}, service: #{service}")
+        Castronaut.logger.info("#{self.class} - Logging in with username: #{username}, login ticket: #{login_ticket}, service: #{service}")
         
         authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password, service, env)
         

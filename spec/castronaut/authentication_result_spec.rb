@@ -2,10 +2,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Castronaut::AuthenticationResult do
   
-  before(:all) do
-    load_cas_config
-  end
-  
   it "exposes the given username at :username" do
     Castronaut::AuthenticationResult.new('billy', anything, anything).username.should == 'billy'
   end
