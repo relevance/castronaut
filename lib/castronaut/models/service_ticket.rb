@@ -5,8 +5,11 @@ module Castronaut
   module Models
 
     class ServiceTicket < ActiveRecord::Base
-
-      attr_accessor :service, :ticket
+      include Castronaut::Models::Consumeable
+      include Castronaut::Models::Dispenser
+      
+      before_validation :dispense_ticket, :if => :new_record?
+      validates_presence_of :ticket, :client_hostname, :service, :username
 
       def self.generate_ticket_for(service, ticket_result)
         # service
@@ -37,6 +40,10 @@ module Castronaut
         end
       end
 
+      private
+        def set_ticket
+          write_attribute :ticket, "ST-#{Castronaut::Utilities::RandomString.generate}"
+        end
     end
 
   end

@@ -11,7 +11,7 @@ describe Castronaut::Models::LoginTicket do
 
   it "requires a ticket" do
     login_ticket = Castronaut::Models::LoginTicket.new :client_hostname => 'http://example.com'
-    login_ticket.stubs(:set_ticket)
+    login_ticket.stubs(:dispense_ticket)
 
     login_ticket.should_not be_valid
     login_ticket.errors.on(:ticket).should_not be_nil

@@ -2,12 +2,15 @@ module Castronaut
   module Models
 
     class LoginTicket < ActiveRecord::Base
+      include Castronaut::Models::Consumeable
+      include Castronaut::Models::Dispenser
+
       MissingMessage = "Your login request did not include a login ticket. There may be a problem with the authentication system."
       InvalidMessage = "The login ticket you provided is invalid. Please try logging in again."
       AlreadyConsumedMessage = "The login ticket you provided has already been used up. Please try logging in again."
       ExpiredMessage = "Your login ticket has expired. Please try logging in again."
-      
-      before_validation :set_ticket, :if => :new_record?
+
+      before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :client_hostname 
 
       def self.generate_from(client_host)
@@ -35,14 +38,8 @@ module Castronaut
         #Time.now - lt.created_on < CASServer::Conf.login_ticket_expiry
       end
 
-      def consume!
 
-      end
-
-      private
-        def set_ticket
-          write_attribute :ticket, "LT-#{Castronaut::Utilities::RandomString.generate}"
-        end
+ 
     end
 
   end

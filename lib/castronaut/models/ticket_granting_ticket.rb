@@ -2,7 +2,9 @@ module Castronaut
   module Models
 
     class TicketGrantingTicket < ActiveRecord::Base
-
+      include Castronaut::Models::Consumeable
+      include Castronaut::Models::Dispenser
+      
       def self.validate_cookie(ticket_cookie)
         Castronaut.logger.debug("#{self} - Validating ticket granting ticket for #{ticket_cookie}")
 
