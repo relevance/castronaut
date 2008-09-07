@@ -52,4 +52,4 @@ else
   end
 end
  
-task :default => [:spec]
+task :default => [:cruise]
