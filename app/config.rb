@@ -11,6 +11,8 @@ configure do
               :views => views,
               :public => pub_dir
 
+  FileUtils.mkdir_p('db') unless File.exist?('db')
+
   $cas_config.cas_adapter.each do |key,value|
     if key == "database"
       ActiveRecord::Base.establish_connection(
