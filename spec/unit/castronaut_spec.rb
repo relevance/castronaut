@@ -134,7 +134,7 @@ describe Castronaut do
 
   end
 
-  describe "Our rake tasks" do
+  describe "Rake tasks" do
 
     describe "SSL Certificate Generation" do
 
