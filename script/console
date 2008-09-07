@@ -1,0 +1,6 @@
+#! /usr/bin/env ruby
+require "irb"
+require File.join(File.dirname(__FILE__), '..', 'castronaut')
+
+IRB.start(__FILE__)
+
