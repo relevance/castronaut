@@ -1,15 +1,11 @@
 module Castronaut
   module Models
 
-    class TicketGrantingTicket
-      
-      def self.find_by_ticket(ticket)
-        
-      end
-      
+    class TicketGrantingTicket < ActiveRecord::Base
+
       def self.validate_cookie(ticket_cookie)
         $cas_config.logger.debug("#{self} - Validating ticket granting ticket for #{ticket_cookie}")
-        
+
         return Castronaut::TicketResult.new(nil, "No ticket granting ticket given") if ticket_cookie.nil?
 
         ticket_granting_ticket = find_by_ticket(ticket_cookie)
@@ -24,7 +20,7 @@ module Castronaut
 
         Castronaut::TicketResult.new(ticket_granting_ticket)
       end
-      
+
       def self.generate_for(username, client_host)
         # 3.6 (ticket granting cookie/ticket)
         ticket_granting_ticket = TicketGrantingTicket.new
@@ -32,15 +28,15 @@ module Castronaut
         ticket_granting_ticket.username = username
         ticket_granting_ticket.client_hostname = client_host
         ticket_granting_ticket.save!
-        
+
         ticket_granting_ticket
       end
-      
+
       def to_cookie
-        
+
       end
-      
+
     end
-    
+
   end
 end

@@ -1,13 +1,13 @@
 class CreateCasDatabase < ActiveRecord::Migration
   def self.up
-    create_table :casserver_lt,   :force => true do |t|
+    create_table :login_tickets,   :force => true do |t|
       t.column :ticket,           :string,   :null => false
       t.column :created_on,       :timestamp, :null => false
       t.column :consumed,         :datetime, :null => true
       t.column :client_hostname,  :string, :null => false
     end
 
-    create_table :casserver_st,   :force => true do |t|
+    create_table :service_tickets,   :force => true do |t|
       t.column :ticket,           :string,    :null => false
       t.column :service,          :text,    :null => false
       t.column :created_on,       :timestamp, :null => false
@@ -19,7 +19,7 @@ class CreateCasDatabase < ActiveRecord::Migration
       t.column :tgt_id,           :integer, :null => true
     end
 
-    create_table :casserver_tgt,  :force => true do |t|
+    create_table :ticket_granting_tickets,  :force => true do |t|
       t.column :ticket,           :string,    :null => false
       t.column :created_on,       :timestamp, :null => false
       t.column :client_hostname,  :string, :null => false
@@ -27,7 +27,7 @@ class CreateCasDatabase < ActiveRecord::Migration
       t.column :extra_attributes, :text
     end
 
-    create_table :casserver_pgt,  :force => true do |t|
+    create_table :proxy_granting_tickets,  :force => true do |t|
       t.column :ticket,           :string,    :null => false
       t.column :created_on,       :timestamp, :null => false
       t.column :client_hostname,  :string, :null => false
@@ -37,9 +37,9 @@ class CreateCasDatabase < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :casserver_pgt
-    drop_table :casserver_tgt
-    drop_table :casserver_st
-    drop_table :casserver_lt
+    drop_table :proxy_granting_tickets
+    drop_table :ticket_granting_tickets
+    drop_table :service_tickets
+    drop_table :login_tickets
   end
 end

@@ -4,17 +4,17 @@ require 'net/https'
 module Castronaut
   module Models
 
-    class ServiceTicket
-      
+    class ServiceTicket < ActiveRecord::Base
+
       attr_accessor :service, :ticket
-      
+
       def self.generate_ticket_for(service, ticket_result)
         # service
         # ticket_result
         # ticket = ticket_result.ticket
         # username = ticket_result.username
       end
-      
+
       # Note: URI.parse is prone to throwing up exceptions if it doesn't like what it sees.
       def service_uri
         begin
@@ -36,8 +36,8 @@ module Castronaut
           # TODO: Log message
         end
       end
-      
+
     end
-    
+
   end
 end
