@@ -10,9 +10,8 @@ module Castronaut
       attr_accessor :ticket, :client_hostname
 
       def self.generate_from(client_host)
-        login_ticket = LoginTicket.new
+        login_ticket = Castronaut::Models::LoginTicket.new :client_hostname => client_host
         login_ticket.ticket = "LT-#{Castronaut::Utilities::RandomString.generate}"
-        login_ticket.client_hostname = client_host
         login_ticket.save!
         login_ticket
       end
