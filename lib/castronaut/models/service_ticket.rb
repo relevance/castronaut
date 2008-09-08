@@ -11,17 +11,15 @@ module Castronaut
       belongs_to :ticket_granting_ticket
       
       before_validation :dispense_ticket, :if => :new_record?
-      validates_presence_of :ticket, :client_hostname, :service, :username
+      validates_presence_of :ticket, :client_hostname, :service, :username, :ticket_granting_ticket
 
-      def self.generate_ticket_for(service, ticket_result)
-        # service
-        # ticket_result
-        # ticket = ticket_result.ticket
-        # username = ticket_result.username
-        
-         # 3.1 (service ticket)
+      def self.generate_ticket_for(service, client_host, ticket_result)
+        create! :service => service,
+                :username => ticket_result.username,
+                :client_hostname => client_host,
+                :ticket_granting_ticket => ticket_result.ticket
       end
-
+      
       # Note: URI.parse is prone to throwing up exceptions if it doesn't like what it sees.
       def service_uri
         return nil if service.blank?
