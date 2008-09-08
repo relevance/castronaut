@@ -55,13 +55,17 @@ end
 
 task :default => [:coverage]
 
-
 namespace :ssl do
 
   desc "Generate a test SSL certificate for development"
   task :generate do
     FileUtils.mkdir_p('ssl') unless File.exist?('ssl')
-    system("openssl req -x509 -nodes -days 365 -subj '/C=US/ST=NC/L=CH/CN=localhost' -newkey rsa:1024 -keyout ssl/devcert.pem -out ssl/devcert.pem")
+    
+    if %x{which openssl}.strip.size == 0
+      puts "Unable to locate openssl, please make sure you have it installed and in your path."
+    else
+      system("openssl req -x509 -nodes -days 365 -subj '/C=US/ST=NC/L=CH/CN=localhost' -newkey rsa:1024 -keyout ssl/devcert.pem -out ssl/devcert.pem")
+    end
   end
 
 end

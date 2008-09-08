@@ -4,11 +4,11 @@ module Castronaut
     module Consumeable
       
       def consumed?
-        !consumed.nil?
+        !consumed_at.nil?
       end
       
       def consume!
-        self.consumed = Time.now
+        self.consumed_at = Time.now
         self.save!
       end
       

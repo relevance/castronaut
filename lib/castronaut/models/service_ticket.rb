@@ -8,7 +8,7 @@ module Castronaut
       include Castronaut::Models::Consumeable
       include Castronaut::Models::Dispenser
       
-      belongs_to :ticket_granting_ticket, :foreign_key => :tgt_id
+      belongs_to :ticket_granting_ticket
       
       before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :client_hostname, :service, :username
@@ -24,6 +24,8 @@ module Castronaut
 
       # Note: URI.parse is prone to throwing up exceptions if it doesn't like what it sees.
       def service_uri
+        return nil if service.blank?
+        
         begin
           raw_uri = URI.parse(service)
 
