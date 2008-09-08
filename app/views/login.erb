@@ -1,26 +1,31 @@
 <% unless presenter.messages.empty? %>
-  <h4 class="flash"><%= presenter.messages.to_s %></h4>
+  <p class="flash"><%= presenter.messages.to_s %></p>
 <% end %>
 
-<div id="left">
-  <div class="content_div index_div">
+<div class="form container">
     <form method="post" action="/login">
-      <p>
+      
+      <p class="instruction">
         <strong>Please login to continue</strong>
       </p>
-      <p>
-        <label for="username">Username</label><br />
-        <input name="username" id="username" type="text" autocomplete="off" />
-      </p>
-      <p>
-        <label for="password">Password</label><br />
+      
+      <div class="field">
+        <label for="username">Username</label>
+        <input name="username" id="username" type="text"/>
+      </div>
+      
+      <div class="field">
+        <label for="password">Password</label>
         <input name="password" id="password" type="password" />
-      </p>
-      <p>
-        <br /><input type="submit" value="Login" />
-      </p>
+      </div>
+      
+      <div class="buttons">
+        <input type="submit" class="button login" value="Login" />
+      </div>
+      
       <input type="hidden" name="lt" id="lt" value="<%= presenter.login_ticket %>" />
       <input type="hidden" name="service" id="service" value="<%= presenter.service %>" />
+      
     </form>
-  </div>
+
 </div>
