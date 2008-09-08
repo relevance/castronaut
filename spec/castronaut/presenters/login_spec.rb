@@ -1,5 +1,4 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_helper'))
-require 'yaml'
 
 describe Castronaut::Presenters::Login do
   
@@ -146,10 +145,7 @@ describe Castronaut::Presenters::Login do
   
   describe "login ticket generation" do
     
-    it "generates a login ticket at the end" do
-      @controller.request.cookies['tgt'] = 'fake cookie'
-      Castronaut::Presenters::Login.new(@controller).ticket_generating_ticket_cookie.should == 'fake cookie'
-    end
+    it "generates a login ticket at the end" 
     
   end
 
