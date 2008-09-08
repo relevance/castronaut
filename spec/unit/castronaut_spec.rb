@@ -16,49 +16,9 @@ describe Castronaut do
 
   describe "Ticket Generators" do
 
-    describe 'Login Ticket' do
-
-      it "can be marked as consumed/used"
-
-    end
-
     describe 'Ticket Granting Ticket' do
 
-      it "generates a new Ticket"
-
-      it "has a random ticket attribute generated using ISAAC"
-
-      it "captures the client hostname on the ticket"
-
-      it "has a username"
-
       it "has extra attributes"
-
-      describe "Validations" do
-
-      end
-
-    end
-
-    describe 'Service Ticket' do
-
-      it "generates a new Ticket"
-
-      it "has a random ticket attribute generated using ISAAC"
-
-      it "has a service"
-
-      it "requires a ticket granting ticket"
-
-      it "has a username"
-
-      it "captures the client hostname on the ticket"
-
-      it "can be marked as consumed/used"
-
-      describe "Validations" do
-
-      end
 
     end
 
