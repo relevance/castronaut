@@ -46,6 +46,10 @@ module Castronaut
         end
       end
       
+      def ticket_prefix
+        "TGC"
+      end
+      
     end
 
   end

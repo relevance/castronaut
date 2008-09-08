@@ -30,6 +30,10 @@ module Castronaut
       def self.generate_for(username, client_host)
         create! :username => username, :client_hostname => client_host
       end
+      
+      def ticket_prefix
+        "TGC"
+      end
 
       def to_cookie
 

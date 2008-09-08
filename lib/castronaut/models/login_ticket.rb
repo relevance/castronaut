@@ -38,6 +38,10 @@ module Castronaut
         #Time.now - lt.created_on < CASServer::Conf.login_ticket_expiry
       end
  
+      def ticket_prefix
+        "LT"
+      end
+      
     end
 
   end
