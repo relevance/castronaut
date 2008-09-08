@@ -10,7 +10,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'ticket
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'login'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'process_login'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'restful_authentication'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'restful_authentication', 'adapter'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'restful_authentication', 'user'))
+
 
 module Castronaut
 

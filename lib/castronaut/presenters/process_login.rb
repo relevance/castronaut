@@ -75,13 +75,15 @@ module Castronaut
 
         Castronaut.logger.info("#{self.class} - Logging in with username: #{username}, login ticket: #{login_ticket}, service: #{service}")
         
-        authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password, service, env)
+        authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password)
         
         if authentication_result.valid?
           ticket_granting_ticket = Castronaut::Models::TicketGrantingTicket.generate_for(username, client_host)
           cookies[:tgt] = ticket_granting_ticket.to_cookie
           
-          if service
+          if service.blank?
+            messages << "You have successfully logged in."
+          else
             service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, client_host, ticket_granting_ticket)
 
             if service_ticket && service_ticket.service_uri
@@ -90,8 +92,6 @@ module Castronaut
             else
               messages << "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
             end
-          else
-            messages << "You have successfully logged in."
           end
 
         else

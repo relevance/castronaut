@@ -46,15 +46,25 @@ module Castronaut
         end
         logger.debug "#{self.class} - initialization complete"
       end
-
+      
       def connect_activerecord
         create_directory('db')
 
-        ActiveRecord::Base.establish_connection(cas_database)
-
         ActiveRecord::Base.logger = Logger.new("#{log_directory}/castronaut.activerecord.log", "daily")
         ActiveRecord::Base.colorize_logging = false
+        
+        connect_cas_to_activerecord
+        connect_adapter_to_activerecord
+      end
+
+      def connect_cas_to_activerecord
+        ActiveRecord::Base.establish_connection(cas_database)
+
         ActiveRecord::Migrator.migrate('lib/castronaut/db', ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+      end
+      
+      def connect_adapter_to_activerecord
+        Castronaut::Adapters::RestfulAuthentication::User.establish_connection(cas_adapter['database'])
       end
   end
   
