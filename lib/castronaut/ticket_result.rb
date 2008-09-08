@@ -11,6 +11,7 @@ module Castronaut
     end
     
     def username
+      puts "Ticket => [#{ticket.inspect}]"
       ticket.username if ticket && ticket.respond_to?(:username)
     end
 
