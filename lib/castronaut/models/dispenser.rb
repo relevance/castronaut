@@ -5,9 +5,7 @@ module Castronaut
 
       private
        def dispense_ticket
-         short_name = self.class.to_s.split("::").last
-         initials = short_name.underscore.split("_").map { |name| name.first.upcase }
-         write_attribute :ticket, "#{initials}-#{Castronaut::Utilities::RandomString.generate}"
+         write_attribute :ticket, "#{ticket_prefix}-#{Castronaut::Utilities::RandomString.generate}"
        end
       
     end

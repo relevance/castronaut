@@ -9,6 +9,10 @@ describe Castronaut::Models::Dispenser do
     
         attr_accessor :ticket
     
+        def ticket_prefix
+          "WOO!"
+        end
+    
         def write_attribute(attr, value)
           instance_variable_set "@#{attr}", value
         end
@@ -17,10 +21,10 @@ describe Castronaut::Models::Dispenser do
     end
   end
   
-  it "returns FM-RandomString for Foo::Bar::FakeModel" do
+  it "returns WOO!-RandomString for Foo::Bar::FakeModel" do
     Castronaut::Utilities::RandomString.stubs(:generate).returns("RANDOM")
     
-    Foo::Bar::FakeModel.new.send(:dispense_ticket).should == "FM-RANDOM"
+    Foo::Bar::FakeModel.new.send(:dispense_ticket).should == "WOO!-RANDOM"
   end
-    
+  
 end
