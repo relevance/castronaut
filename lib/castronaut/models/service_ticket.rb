@@ -24,6 +24,8 @@ module Castronaut
 
       # Note: URI.parse is prone to throwing up exceptions if it doesn't like what it sees.
       def service_uri
+        return nil if service.blank?
+        
         begin
           raw_uri = URI.parse(service)
 

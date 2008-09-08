@@ -33,24 +33,6 @@ describe Castronaut::Models::TicketGrantingTicket do
            Castronaut::Models::TicketGrantingTicket.validate_cookie('abc').error_message.should == "Your session has expired. Please log in again."
          end
 
-         xit "logs a message containing the ticket and the ticket username" do
-           Castronaut::Models::TicketGrantingTicket.expects(:log_info).with("Ticket granting ticket [abc] for [bob_smith] successfully validated.")
-           Castronaut::Models::TicketGrantingTicket.validate_cookie('abc')
-         end
-
-       end
-
-       describe "when it fails to find a ticket granting ticket" do
-
-         before do
-           Castronaut::Models::TicketGrantingTicket.stubs(:find_by_ticket).returns(nil)
-         end
-
-         xit "logs a message containing the ticket and that is was not found in the database" do
-           Castronaut::Models::TicketGrantingTicket.expects(:log_warn).with("Ticket granting ticket [abc] was not found in the database.")
-           Castronaut::Models::TicketGrantingTicket.validate_cookie('abc')
-         end
-
        end
 
      end
@@ -66,4 +48,13 @@ describe Castronaut::Models::TicketGrantingTicket do
 
    end
   
+   describe "generating for a username and client host" do
+     
+     it "delegates to :create!" do
+       Castronaut::Models::TicketGrantingTicket.expects(:create!).with(:username => 'username', :client_hostname => 'client_host')
+       Castronaut::Models::TicketGrantingTicket.generate_for('username', 'client_host')
+     end
+     
+   end
+   
 end

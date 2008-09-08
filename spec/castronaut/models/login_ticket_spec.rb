@@ -25,5 +25,70 @@ describe Castronaut::Models::LoginTicket do
     end
 
   end
+  
+  describe "validating a ticket" do
+    
+    describe "when the ticket is missing" do
+      
+      it "returns a ticket result with the MissingMessage" do
+        Castronaut::TicketResult.expects(:new).with(nil, Castronaut::Models::LoginTicket::MissingMessage)
+        Castronaut::Models::LoginTicket.validate_ticket(nil)
+      end
+      
+    end
+    
+    it "attempts to the find the login ticket using the given ticket" do
+      Castronaut::Models::LoginTicket.expects(:find_by_ticket).with("ticket").returns(nil)
+      Castronaut::Models::LoginTicket.validate_ticket("ticket")
+    end
+    
+    describe "when the ticket is invalid" do
+      
+      it "returns a ticket result with the InvalidMessage" do
+        Castronaut::TicketResult.expects(:new).with(nil, Castronaut::Models::LoginTicket::InvalidMessage)
+        Castronaut::Models::LoginTicket.stubs(:find_by_ticket).returns(nil)
+        Castronaut::Models::LoginTicket.validate_ticket("ticket")
+      end
+      
+    end
+    
+    describe "when the ticket is valid" do
+      
+      describe "and it has already been consumed" do
+        
+        it "returns a ticket result with the AlreadyConsumedMessage" do
+          login_ticket = stub_everything(:consumed? => true)
+          
+          Castronaut::TicketResult.expects(:new).with(login_ticket, Castronaut::Models::LoginTicket::AlreadyConsumedMessage)
+          Castronaut::Models::LoginTicket.stubs(:find_by_ticket).returns(login_ticket)
+          Castronaut::Models::LoginTicket.validate_ticket("ticket")
+        end
+        
+      end
+      
+      describe "and it has already expired" do
+        
+        it "returns a ticket result with the ExpiredMessage" do
+          login_ticket = stub_everything(:expired? => true, :consumed? => false)
+          
+          Castronaut::TicketResult.expects(:new).with(login_ticket, Castronaut::Models::LoginTicket::ExpiredMessage)
+          Castronaut::Models::LoginTicket.stubs(:find_by_ticket).returns(login_ticket)
+          Castronaut::Models::LoginTicket.validate_ticket("ticket")
+        end
+        
+      end
+      
+      it "consumes the ticket" do
+        login_ticket = stub_everything(:expired? => false, :consumed? => false)
+        login_ticket.expects(:consume!)
+        
+        Castronaut::Models::LoginTicket.stubs(:find_by_ticket).returns(login_ticket)
+
+        Castronaut::Models::LoginTicket.validate_ticket("ticket")
+      end
+      
+    end
+    
+  end
 
 end
