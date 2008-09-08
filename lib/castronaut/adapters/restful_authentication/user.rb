@@ -6,8 +6,6 @@ module Castronaut
       
       class User < ActiveRecord::Base
       
-        before_save :generate_encryption_salt
-
         def self.digest(password, salt)
           site_key = Castronaut.config.cas_adapter['site_key']
           digest_value = site_key
