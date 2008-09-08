@@ -5,6 +5,8 @@ module Castronaut
       include Castronaut::Models::Consumeable
       include Castronaut::Models::Dispenser
       
+      has_many :service_tickets, :dependent => :destroy
+      
       before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :username
       

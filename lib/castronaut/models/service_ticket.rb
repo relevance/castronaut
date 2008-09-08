@@ -8,7 +8,7 @@ module Castronaut
       include Castronaut::Models::Consumeable
       include Castronaut::Models::Dispenser
       
-      belongs_to :ticket_granting_ticket, :foreign_key => :tgt_id
+      belongs_to :ticket_granting_ticket
       
       before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :client_hostname, :service, :username

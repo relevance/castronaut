@@ -10,12 +10,6 @@
     <h1 id="wurst"><a href="/login"><%= Castronaut.config.organization_name || 'CAS Server' %></a></h1>
   </div>
   <div id="anotherline"></div>
-  <div id="two_columns">
-    <%= yield %>
-
-    <div id="right">
-      <%#= yield :sidebar %>
-    </div>
-  </div>
+  <div id="two_columns"><%= yield %></div>
 </body>
 </html>
