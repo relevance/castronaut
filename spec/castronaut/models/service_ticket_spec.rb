@@ -2,6 +2,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 
 describe Castronaut::Models::ServiceTicket do
   
+  it "has a ticket prefix of ST" do
+    Castronaut::Models::ServiceTicket.new.ticket_prefix.should == 'ST'
+  end
+  
   describe "service uri" do
     
     it "returns nil if no service is present" do

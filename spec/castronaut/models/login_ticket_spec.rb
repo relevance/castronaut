@@ -2,6 +2,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 
 describe Castronaut::Models::LoginTicket do
 
+  it "has a ticket prefix of LT" do
+    Castronaut::Models::LoginTicket.new.ticket_prefix.should == 'LT'
+  end
+  
   it "requires a client hostname" do
     login_ticket = Castronaut::Models::LoginTicket.new
     
