@@ -13,14 +13,13 @@ module Castronaut
       before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :client_hostname, :service, :username, :ticket_granting_ticket
 
-      def self.generate_ticket_for(service, client_host, ticket_result)
+      def self.generate_ticket_for(service, client_host, ticket_granting_ticket)
         create! :service => service,
-                :username => ticket_result.username,
+                :username => ticket_granting_ticket.username,
                 :client_hostname => client_host,
-                :ticket_granting_ticket => ticket_result.ticket
+                :ticket_granting_ticket => ticket_granting_ticket
       end
       
-      # Note: URI.parse is prone to throwing up exceptions if it doesn't like what it sees.
       def service_uri
         return nil if service.blank?
         
@@ -40,10 +39,9 @@ module Castronaut
           "#{service}#{query_separator}ticket=#{ticket}"
         rescue URI::InvalidURIError
           nil
-          # TODO: Log message
         end
       end
-      
+            
       def ticket_prefix
         "ST"
       end

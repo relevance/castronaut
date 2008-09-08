@@ -13,7 +13,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapte
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'restful_authentication'))
 
 module Castronaut
-  @cas_config ||= Castronaut::Configuration.new('./castronaut.example.yml')
+
   def self.config
     @cas_config
   end
@@ -25,4 +25,5 @@ module Castronaut
   def self.logger
     @cas_config.logger
   end
+  
 end

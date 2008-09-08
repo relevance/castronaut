@@ -15,7 +15,7 @@ class CreateCasDatabase < ActiveRecord::Migration
       t.column :client_hostname,  :string,    :null => false
       t.column :service,          :text,      :null => false
       t.column :username,         :string,    :null => false
-      t.column :type,             :string,    :null => false
+      t.column :type,             :string,    :null => true
       t.column :consumed_at,      :datetime,  :null => true
       t.column :created_at,       :datetime,  :null => false
     end

@@ -2,6 +2,8 @@ module Castronaut
   module Presenters
 
     class ProcessLogin
+      MissingCredentialsMessage = "Please supply a username and password to login."
+      
       attr_reader :controller, :your_mission
       attr_accessor :messages, :login_ticket
 
@@ -61,6 +63,13 @@ module Castronaut
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401 
           return self
         end
+        
+        if username.blank? || password.blank?
+          messages << MissingCredentialsMessage
+          @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
+          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401 
+          return self
+        end
 
         @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
 
@@ -73,7 +82,7 @@ module Castronaut
           cookies[:tgt] = ticket_granting_ticket.to_cookie
           
           if service
-            service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket)
+            service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, client_host, ticket_granting_ticket)
 
             if service_ticket && service_ticket.service_uri
               @your_mission = lambda { controller.redirect(service_ticket.service_uri, 303) }

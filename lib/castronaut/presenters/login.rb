@@ -57,7 +57,7 @@ module Castronaut
 
           if service
             if !renewal && ticket_granting_ticket_result.valid?
-              service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, ticket_granting_ticket_result)
+              service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, client_host, ticket_granting_ticket_result.ticket)
             
               if service_ticket.service_uri
                 return controller.redirect(service_ticket.service_uri, 303)

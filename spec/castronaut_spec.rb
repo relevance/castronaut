@@ -2,6 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Castronaut do
   
+  after(:all) do
+    Castronaut.config = Castronaut::Configuration.new(File.join(File.dirname(__FILE__), '..', 'castronaut.yml'))
+  end
+  
   it "exposes the config at Castronaut.config" do
     Castronaut.config.should == Castronaut.instance_variable_get("@cas_config")
   end
@@ -13,8 +17,6 @@ describe Castronaut do
     Castronaut.config.should_not == new_config
     Castronaut.config = new_config
     Castronaut.config.should == new_config
-    
-    Castronaut.config = original_config
   end
   
   it "exposes the configuration logger as Castronaut.logger" do

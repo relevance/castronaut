@@ -68,11 +68,10 @@ describe Castronaut::Models::ServiceTicket do
     
     it "delegates to create!" do
       ticket = Castronaut::Models::TicketGrantingTicket.new :username => 'foo'
-      ticket_result = Castronaut::TicketResult.new(ticket)
-      
+    
       Castronaut::Models::ServiceTicket.expects(:create!).with(:service => 'service', :client_hostname => 'client_host', :username => 'foo', :ticket_granting_ticket => ticket)
       
-      Castronaut::Models::ServiceTicket.generate_ticket_for('service', 'client_host', ticket_result)
+      Castronaut::Models::ServiceTicket.generate_ticket_for('service', 'client_host', ticket)
     end
     
   end

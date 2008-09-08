@@ -19,6 +19,8 @@ end.parse!
 
 if options[:config_file]
   Castronaut.config = Castronaut::Configuration.new(options[:config_file])
+else
+  Castronaut.config = Castronaut::Configuration.new(File.join(File.dirname(__FILE__), '..', 'castronaut.yml'))
 end
 
 Sinatra::Application.default_options.merge!(

@@ -2,5 +2,6 @@
 require "irb"
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
 
-IRB.start(__FILE__)
+Castronaut.config = Castronaut::Configuration.new(File.join(File.dirname(__FILE__), '..', 'castronaut.yml'))
 
+IRB.start(__FILE__)

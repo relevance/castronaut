@@ -5,8 +5,8 @@ describe Castronaut::Presenters::Login do
   
   before do
     @controller = mock('controller')
-    @controller.stubs(:params).returns({})
-    @controller.stubs(:request).returns(stub(:cookies => {}))
+    @controller.stubs(:params).returns({ })
+    @controller.stubs(:request).returns(stub(:cookies => {}, :env => { 'REMOTE_ADDR' => '10.1.1.1' }))
     @controller.stubs(:erb)
   end
 
@@ -78,32 +78,24 @@ describe Castronaut::Presenters::Login do
       @controller.params['service'] = 'http://example.com'
       @controller.request.cookies['tgt'] = 'tgt'
       @controller.stubs(:redirect)
-      Castronaut::Models::TicketGrantingTicket.expects(:validate_cookie).returns(Castronaut::TicketResult.new(stub_everything(:username => 'B')))      
+      @ticket_granting_ticket_result = Castronaut::TicketResult.new(Castronaut::Models::TicketGrantingTicket.new(:username => 'B'))
+      Castronaut::Models::TicketGrantingTicket.stubs(:validate_cookie).returns(@ticket_granting_ticket_result)
     end
 
-    describe "when it is not a renewal and there is a ticket generating ticket without an error" do
+    describe "when it is not a renewal and there is a ticket granting ticket without an error" do
 
-      it "generates a service ticket from the service, ticket generating ticket username, and the ticket generating ticket" do
-        Castronaut::Models::ServiceTicket.expects(:generate_ticket_for).with('http://example.com', anything).returns(stub_everything)
-
-        Castronaut::Presenters::Login.new(@controller).represent!
-      end
-
-      it "generates a service ticket from the service" do
-        service_ticket = Castronaut::Models::ServiceTicket.new
-        service_ticket.service = 'http://example.com'
-        Castronaut::Models::ServiceTicket.expects(:generate_ticket_for).with('http://example.com', anything).returns(service_ticket)
+      it "generates a service ticket from the service, client hostname, and ticket generating ticket" do
+        Castronaut::Models::ServiceTicket.expects(:generate_ticket_for).with('http://example.com', '10.1.1.1', @ticket_granting_ticket_result.ticket).returns(Castronaut::Models::ServiceTicket.new)
 
         Castronaut::Presenters::Login.new(@controller).represent!
       end
 
       it "redirects to the service uri(status 303)" do
-        service_ticket = Castronaut::Models::ServiceTicket.new
-        service_ticket.service = 'http://example.com'
+        service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com')
+        service_ticket.stubs(:service_uri).returns('http://example.com')
         
         Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).returns(service_ticket)
-        service_ticket.stubs(:service_uri).returns('http://example.com')
-
+        
         @controller.expects(:redirect).with('http://example.com', 303)
 
         Castronaut::Presenters::Login.new(@controller).represent!
@@ -133,7 +125,7 @@ describe Castronaut::Presenters::Login do
         service_ticket = Castronaut::Models::ServiceTicket.new
         service_ticket.service = 'pickles'
         service_ticket.expects(:service_uri).returns(nil)
-        Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).with('http://example.com', anything).returns(service_ticket)
+        Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).with('http://example.com', '10.1.1.1', anything).returns(service_ticket)
 
         Castronaut::Presenters::Login.new(@controller).represent!.messages.should include("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")
       end
