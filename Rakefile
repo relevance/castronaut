@@ -53,8 +53,6 @@ else
   end
 end
 
-FileUtils.rm_rf "db/*.db"
-
 task :default => [:coverage]
 
 namespace :ssl do
