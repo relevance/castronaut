@@ -32,6 +32,8 @@ post '/loginTicket' do
   body 'loginTicket-Post'
 end
 
+# TODO: We must implement proxy validate it seems
+
 private
   def no_cache
     headers 'Pragma' => 'no-cache',
