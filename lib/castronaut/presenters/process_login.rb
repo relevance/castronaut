@@ -3,7 +3,7 @@ module Castronaut
 
     class ProcessLogin
       MissingCredentialsMessage = "Please supply a username and password to login."
-      
+
       attr_reader :controller, :your_mission
       attr_accessor :messages, :login_ticket
 
@@ -29,7 +29,7 @@ module Castronaut
         return true if params['gateway'] == '1'
         false
       end
-      
+
       def ticket_generating_ticket_cookie
         cookies['tgt']
       end
@@ -37,50 +37,50 @@ module Castronaut
       def redirection_loop?
         params.has_key?('redirection_loop_intercepted')
       end
-      
+
       def client_host
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
       end
-      
+
       # POSSIBLE SHARED ABOVE
-      
+
       def username
         params['username'].strip
       end
-      
+
       def password
         params['password']
       end
-      
+
       def represent!
-        @login_ticket = params['lt'] 
-        
+        @login_ticket = params['lt']
+
         login_ticket_validation_result = Castronaut::Models::LoginTicket.validate_ticket(@login_ticket)
 
         if login_ticket_validation_result && login_ticket_validation_result.invalid?
           messages << login_ticket_validation_result.error_message
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
-          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401 
+          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401
           return self
         end
-        
+
         if username.blank? || password.blank?
           messages << MissingCredentialsMessage
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
-          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401 
+          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401
           return self
         end
 
         @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
 
         Castronaut.logger.info("#{self.class} - Logging in with username: #{username}, login ticket: #{login_ticket}, service: #{service}")
-        
+
         authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password)
-        
+
         if authentication_result.valid?
           ticket_granting_ticket = Castronaut::Models::TicketGrantingTicket.generate_for(username, client_host)
           cookies[:tgt] = ticket_granting_ticket.to_cookie
-          
+
           if service.blank?
             messages << "You have successfully logged in."
           else
@@ -97,15 +97,15 @@ module Castronaut
         else
           messages << authentication_result.error_message
         end
-        
+
         if messages.any?
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
         end
-        
+
         self
       end
-      
+
     end
-    
+
   end
 end
