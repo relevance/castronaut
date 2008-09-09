@@ -32,6 +32,10 @@ module Castronaut
         params['pgtUrl']
       end
       
+      def proxy_granting_ticket_iou
+        @proxy_granting_ticket_result && @proxy_granting_ticket_result.iou
+      end
+      
       def username
         @service_ticket_result.username
       end
@@ -49,13 +53,12 @@ module Castronaut
         
         if @service_ticket_result.valid?
           if proxy_granting_ticket_url
-            proxy_granting_ticket_result = Castronaut::Models::ProxyGrantingTicket.generate_ticket(proxy_granting_ticket_url, client_host, @service_ticket_result.ticket)
+            @proxy_granting_ticket_result = Castronaut::Models::ProxyGrantingTicket.generate_ticket(proxy_granting_ticket_url, client_host, @service_ticket_result.ticket)
           end
-        else
-          
         end
         
-
+        @your_mission = lambda { controller.builder :service_validate, :locals => { :presenter => self } }
+        
         self
       end
 
