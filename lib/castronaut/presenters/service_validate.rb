@@ -23,67 +23,38 @@ module Castronaut
       def renewal
         params['renew']
       end
-
-      def service_ticket
+      
+      def ticket
         params['ticket']
       end
-
-      def proxy_callback_url
+      
+      def proxy_granting_ticket_url
         params['pgtUrl']
       end
-
+      
+      def username
+        @service_ticket_result.username
+      end
+      
+      def extra_attributes
+        (@service_ticket_result.ticket_granting_ticket && @service_ticket_result.ticket_granting_ticket.extra_attributes) || {}
+      end
+            
+      def client_host
+        env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
+      end
+    
       def represent!
+        @service_ticket_result = Castronaut::Models::ServiceTicket.validate_ticket(service, ticket)
         
-
-
-        @login_ticket = params['lt']
-
-        login_ticket_validation_result = Castronaut::Models::LoginTicket.validate_ticket(@login_ticket)
-
-        if login_ticket_validation_result && login_ticket_validation_result.invalid?
-          messages << login_ticket_validation_result.message
-          @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
-          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401
-          return self
-        end
-
-        if username.blank? || password.blank?
-          messages << MissingCredentialsMessage
-          @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
-          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401
-          return self
-        end
-
-        @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
-
-        Castronaut.logger.info("#{self.class} - Logging in with username: #{username}, login ticket: #{login_ticket}, service: #{service}")
-
-        authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password)
-
-        if authentication_result.valid?
-          ticket_granting_ticket = Castronaut::Models::TicketGrantingTicket.generate_for(username, client_host)
-          cookies[:tgt] = ticket_granting_ticket.to_cookie
-
-          if service.blank?
-            messages << "You have successfully logged in."
-          else
-            service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, client_host, ticket_granting_ticket)
-
-            if service_ticket && service_ticket.service_uri
-              @your_mission = lambda { controller.redirect(service_ticket.service_uri, 303) }
-              return self
-            else
-              messages << "The target service your browser supplied appears to be invalid. Please contact your system administrator for help."
-            end
+        if @service_ticket_result.valid?
+          if proxy_granting_ticket_url
+            proxy_granting_ticket_result = Castronaut::Models::ProxyGrantingTicket.generate_ticket(proxy_granting_ticket_url, client_host, @service_ticket_result.ticket)
           end
-
         else
-          messages << authentication_result.message
+          
         end
-
-        if messages.any?
-          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
-        end
+        
 
         self
       end

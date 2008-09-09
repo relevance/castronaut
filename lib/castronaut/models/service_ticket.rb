@@ -11,6 +11,7 @@ module Castronaut
       MissingMessage = "Ticket or service parameter was missing in the request."
       
       belongs_to :ticket_granting_ticket
+      has_many :proxy_granting_tickets, :dependent => :destroy
       
       before_validation :dispense_ticket, :if => :new_record?
       validates_presence_of :ticket, :client_hostname, :service, :username, :ticket_granting_ticket

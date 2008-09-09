@@ -41,7 +41,7 @@ describe Castronaut::Presenters::ProcessLogin do
 
     it "returns false when anything else is passed in" do
       @controller.params['gateway'] = 'asdf'
-      Castronaut::Presenters::ProcessLogin.new(@controller).gateway?.should be_false
+      Castronaut::Presenters::ProcessLogin.new(@controller).should_not be_gateway
     end
 
   end
