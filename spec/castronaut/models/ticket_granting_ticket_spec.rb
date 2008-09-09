@@ -10,10 +10,14 @@ describe Castronaut::Models::TicketGrantingTicket do
 
     describe "when given no ticket" do
 
-      it "has an error message explaining you must give a ticket" do
-        Castronaut::Models::TicketGrantingTicket.validate_cookie(nil).error_message.should == 'No ticket granting ticket given'
+      it "has a message explaining you must give a ticket" do
+        Castronaut::Models::TicketGrantingTicket.validate_cookie(nil).message.should == 'No ticket granting ticket given'
       end
-
+      
+      it "is invalid" do
+        Castronaut::Models::TicketGrantingTicket.validate_cookie(nil).should be_invalid
+      end
+      
     end
 
     describe "when given a ticket" do
@@ -34,7 +38,7 @@ describe Castronaut::Models::TicketGrantingTicket do
 
         it "returns an error message if the ticket granting ticket is expired" do
           @ticket_granting_ticket.stubs(:expired?).returns(true)
-          Castronaut::Models::TicketGrantingTicket.validate_cookie('abc').error_message.should == "Your session has expired. Please log in again."
+          Castronaut::Models::TicketGrantingTicket.validate_cookie('abc').message.should == "Your session has expired. Please log in again."
         end
 
       end
@@ -45,7 +49,7 @@ describe Castronaut::Models::TicketGrantingTicket do
 
       it "returns a TicketResult with no error message" do
         Castronaut::Models::TicketGrantingTicket.stubs(:find_by_ticket).returns(nil)
-        Castronaut::Models::TicketGrantingTicket.validate_cookie('abc').error_message.should be_nil
+        Castronaut::Models::TicketGrantingTicket.validate_cookie('abc').message.should be_nil
       end
 
     end

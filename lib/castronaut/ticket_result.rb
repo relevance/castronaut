@@ -1,13 +1,15 @@
 module Castronaut
 
   class TicketResult
-    
-    attr_reader :ticket, :error_message
+    InvalidMessageCategories = %w{warn error fatal invalid} 
+
+    attr_reader :ticket, :message, :message_category
         
-    def initialize(ticket, error_message=nil)
+    def initialize(ticket, message=nil, message_category=nil)
       @ticket = ticket
-      @error_message = error_message
-      Castronaut.logger.info("#{self.class} - #{@error_message} for #{@ticket}") if @error_message && @ticket
+      @message = message
+      @message_category = message_category
+      Castronaut.logger.info("#{self.class} - #{@message_category} #{@message} for #{@ticket}") if @message && @ticket
     end
     
     def username
@@ -15,11 +17,11 @@ module Castronaut
     end
 
     def valid?
-      error_message.nil?
+      !invalid?
     end
     
     def invalid?
-      !valid?
+      InvalidMessageCategories.any?{ |cat| message_category.to_s.downcase.include?(cat) }
     end
     
   end

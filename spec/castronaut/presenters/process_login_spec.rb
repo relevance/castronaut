@@ -189,7 +189,6 @@ describe Castronaut::Presenters::ProcessLogin do
               @controller.expects(:redirect).with(:service_uri_stub, 303)
               process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
               process_login.represent!
-              puts process_login.instance_variables
               process_login.instance_variable_get("@your_mission").call
             end
 

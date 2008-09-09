@@ -48,7 +48,7 @@ module Castronaut
         ticket_granting_ticket_result = Castronaut::Models::TicketGrantingTicket.validate_cookie(ticket_generating_ticket_cookie)
 
         if ticket_granting_ticket_result.valid?
-          messages << "You are currently logged in as #{ticket_granting_ticket_result.username}.  If this is not you, please log in below."
+        messages << "You are currently logged in as #{ticket_granting_ticket_result.username}.  If this is not you, please log in below."
         end
 
         if redirection_loop?

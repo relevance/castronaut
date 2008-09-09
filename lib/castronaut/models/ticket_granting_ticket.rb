@@ -13,13 +13,13 @@ module Castronaut
       def self.validate_cookie(ticket_cookie)
         Castronaut.logger.debug("#{self} - Validating ticket for #{ticket_cookie}")
 
-        return Castronaut::TicketResult.new(nil, "No ticket granting ticket given") if ticket_cookie.nil?
+        return Castronaut::TicketResult.new(nil, "No ticket granting ticket given", 'warn') if ticket_cookie.nil?
 
         ticket_granting_ticket = find_by_ticket(ticket_cookie)
 
         if ticket_granting_ticket
           Castronaut.logger.debug("#{self} -[#{ticket_cookie}] for [#{ticket_granting_ticket.username}] successfully validated.")
-          return Castronaut::TicketResult.new(ticket_granting_ticket, "Your session has expired. Please log in again.") if ticket_granting_ticket.expired?
+          return Castronaut::TicketResult.new(ticket_granting_ticket, "Your session has expired. Please log in again.", 'warn') if ticket_granting_ticket.expired?
         else
           Castronaut.logger.debug("#{self} - [#{ticket_cookie}] was not found in the database.")
         end

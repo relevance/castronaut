@@ -1,7 +1,7 @@
 module Castronaut
   module Presenters
 
-    class ProcessLogin
+    class ServiceValidate
       MissingCredentialsMessage = "Please supply a username and password to login."
 
       attr_reader :controller, :your_mission
@@ -24,35 +24,18 @@ module Castronaut
         params['renew']
       end
 
-      def gateway?
-        return true if params['gateway'] == 'true'
-        return true if params['gateway'] == '1'
-        false
+      def service_ticket
+        params['ticket']
       end
 
-      def ticket_generating_ticket_cookie
-        cookies['tgt']
-      end
-
-      def redirection_loop?
-        params.has_key?('redirection_loop_intercepted')
-      end
-
-      def client_host
-        env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
-      end
-
-      # POSSIBLE SHARED ABOVE
-
-      def username
-        params['username'].to_s.strip
-      end
-
-      def password
-        params['password']
+      def proxy_callback_url
+        params['pgtUrl']
       end
 
       def represent!
+        
+
+
         @login_ticket = params['lt']
 
         login_ticket_validation_result = Castronaut::Models::LoginTicket.validate_ticket(@login_ticket)
@@ -95,7 +78,7 @@ module Castronaut
           end
 
         else
-          messages << authentication_result.error_message
+          messages << authentication_result.message
         end
 
         if messages.any?

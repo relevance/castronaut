@@ -145,8 +145,11 @@ describe Castronaut::Presenters::Login do
   
   describe "login ticket generation" do
     
-    it "generates a login ticket at the end" 
-    
+     it "generates a new login ticket when you call :login_ticket" do
+       Castronaut::Models::LoginTicket.expects(:generate_from).returns(stub_everything(:ticket => 'ticket'))
+       Castronaut::Presenters::Login.new(@controller).login_ticket
+     end
+
   end
 
 end

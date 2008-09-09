@@ -21,6 +21,9 @@ get '/validate' do
 end
 
 get '/serviceValidate' do
+  # @presenter = Castronaut::Presenters::ServiceValidate.new(self)
+  # @presenter.represent!
+  # @presenter.your_mission.call
   body 'serviceValidate-Get'
 end
 

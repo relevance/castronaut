@@ -76,4 +76,146 @@ describe Castronaut::Models::ServiceTicket do
     
   end
 
+  describe "matching service?" do
+    
+    it "matches if the given service is equal to the ticket's service" do
+      service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://foo')
+      service_ticket.matches_service?('foo').should be_false
+      service_ticket.matches_service?('http://foo').should be_true
+      service_ticket.matches_service?('http://foo/').should be_false
+    end
+    
+  end
+  
+  describe "validating ticket" do
+  
+    describe "when the service and ticket are missing returns a ticket result" do
+      
+      it "with the missing ticket message" do
+        Castronaut::Models::ServiceTicket.validate_ticket(nil, nil).message.should == Castronaut::Models::ServiceTicket::MissingMessage
+      end
+      
+      it "with the INVALID_REQUEST message category" do
+        Castronaut::Models::ServiceTicket.validate_ticket(nil, nil).message_category.should == 'INVALID_REQUEST'
+      end
+      
+      it "is marked as invalid" do
+        Castronaut::Models::ServiceTicket.validate_ticket(nil, nil).should be_invalid
+      end
+      
+    end
+    
+    describe "when the service and ticket are given" do
+      
+      it "attempts to find the ServiceTicket by the given ticket" do
+        Castronaut::Models::ServiceTicket.expects(:find_by_ticket).with('ticket').returns(stub_everything)
+        Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket')
+      end
+      
+      describe "when it fails to find a service ticket returns a ticket result" do
+        
+        it "with the ticket not recognized message" do
+          Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(nil)
+          Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket ticket not recognized."
+        end
+
+        it "with the INVALID_TICKET message category" do
+          Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(nil)
+          Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message_category.should == 'INVALID_TICKET'
+        end
+
+        it "is marked as invalid" do
+          Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(nil)
+          Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
+        end
+        
+      end
+            
+      describe "when it finds a service ticket" do
+        
+        describe "when it is already consumed it returns a ticket result" do
+          
+          it "with the ticket used up message" do
+            Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:consumed? => true))
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket 'ticket' has already been used up."
+          end
+
+          it "with the INVALID_TICKET message category" do
+            Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:consumed? => true))
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message_category.should == 'INVALID_TICKET'
+          end
+
+          it "is marked as invalid" do
+            Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:consumed? => true))
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
+          end
+          
+        end
+        
+        describe "when it has not been consumed" do
+          
+          it "consumes the service ticket" do
+            service_ticket = stub_everything(:consumed? => false)
+            service_ticket.expects(:consume!)
+            
+            Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(service_ticket)
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket')
+          end
+          
+          describe "when it encounters a proxy ticket it returns a ticket result" do
+            
+            it "with the ticket is a proxy ticket message"
+            
+            it "with the INVALID_TICKET message category"
+            
+            it "is marked as invalid"
+            
+          end
+          
+          describe "when it is already expired it returns a ticket result" do
+
+            it "with the ticket expired message" do
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:expired? => true, :consumed? => false))
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket 'ticket' has expired."
+            end
+
+            it "with the INVALID_TICKET message category" do
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:expired? => true, :consumed? => false))
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message_category.should == 'INVALID_TICKET'
+            end
+
+            it "is marked as invalid" do
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:expired? => true, :consumed? => false))
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
+            end
+
+          end   
+          
+          describe "when it encounters a mismatched service it returns a ticket result" do
+
+            it "with the service mismatch message" do
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:expired? => false, :consumed? => false, :service => 'blah'))
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should include("does not match the service")
+            end
+
+            it "with the INVALID_SERVICE message category" do
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:expired? => false, :consumed? => false, :service => 'blah'))
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message_category.should == 'INVALID_SERVICE'
+            end
+
+            it "is marked as invalid" do
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:expired? => false, :consumed? => false, :service => 'blah'))
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
+            end
+
+          end
+                 
+        end
+        
+      end
+      
+    end
+    
+  end
+  
 end

@@ -4,8 +4,7 @@ Autotest.add_hook :initialize do |autotest|
  # autotest.sleep = 3  
   
  # Ignore files with suffix  
- %w{.svn .log .hg .git .erb .rhtml .png .txt .sh .project .rjs .rake .jpg .css .xml}.each { |exception| autotest.add_exception(exception) }  
- 
- # autotest.add_exception(/^\.\/vendor/)
+
+ %w{.svn .log .hg .git .erb .rhtml .png .txt .sh .project .rjs .rake .jpg .css .xml vendor db}.each { |exception| autotest.add_exception(exception) }  
 
 end
