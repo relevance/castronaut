@@ -1,24 +1,24 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_helper'))
 
 describe Castronaut::Models::ServiceTicket do
-  
+
   it "has a ticket prefix of ST" do
     Castronaut::Models::ServiceTicket.new.ticket_prefix.should == 'ST'
   end
-  
+
   describe "service uri" do
-    
+
     it "returns nil if no service is present" do
       Castronaut::Models::ServiceTicket.new.service_uri.should be_nil
     end
-    
+
     it "tries to parse service using URI.parse" do
       URI.expects(:parse).with('http://example.com')
-      
+
       service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com')
       service_ticket.service_uri
     end
-    
+
     describe "when the service has an existing querystring" do
 
       it "appends the ticket to the service querystring" do
@@ -27,93 +27,93 @@ describe Castronaut::Models::ServiceTicket do
       end
 
     end
-    
+
     describe "when the service has no querystring" do
-      
+
       it "adds a querystring containing the ticket to the service" do
         service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com', :ticket => 'my_ticket')
         service_ticket.service_uri.should == "http://example.com?ticket=my_ticket"
       end
-      
+
     end
-    
+
     describe "when the service has a querystring of '?' only" do
-      
+
       it "removes the question mark" do
         service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com?', :ticket => 'my_ticket')
         service_ticket.service_uri.should == "http://example.com?ticket=my_ticket"
       end
-            
+
     end
-    
+
     describe "when you give an invalid URI" do
-      
+
       it "handles the URI::InvalidURIError" do
         URI.expects(:parse).raises(URI::InvalidURIError)
 
         service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'invalid uri here', :ticket => 'my_ticket')
         service_ticket.service_uri
       end
-      
+
       it "returns nil" do
         service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'invalid uri here', :ticket => 'my_ticket')
         service_ticket.service_uri.should be_nil
       end
-      
+
     end
-    
+
   end
-  
+
   describe "generate ticket for" do
-    
+
     it "delegates to create!" do
       ticket = Castronaut::Models::TicketGrantingTicket.new :username => 'foo'
-    
+
       Castronaut::Models::ServiceTicket.expects(:create!).with(:service => 'service', :client_hostname => 'client_host', :username => 'foo', :ticket_granting_ticket => ticket)
-      
+
       Castronaut::Models::ServiceTicket.generate_ticket_for('service', 'client_host', ticket)
     end
-    
+
   end
 
   describe "matching service?" do
-    
+
     it "matches if the given service is equal to the ticket's service" do
       service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://foo')
       service_ticket.matches_service?('foo').should be_false
       service_ticket.matches_service?('http://foo').should be_true
       service_ticket.matches_service?('http://foo/').should be_false
     end
-    
+
   end
-  
+
   describe "validating ticket" do
-  
+
     describe "when the service and ticket are missing returns a ticket result" do
-      
+
       it "with the missing ticket message" do
         Castronaut::Models::ServiceTicket.validate_ticket(nil, nil).message.should == Castronaut::Models::ServiceTicket::MissingMessage
       end
-      
+
       it "with the INVALID_REQUEST message category" do
         Castronaut::Models::ServiceTicket.validate_ticket(nil, nil).message_category.should == 'INVALID_REQUEST'
       end
-      
+
       it "is marked as invalid" do
         Castronaut::Models::ServiceTicket.validate_ticket(nil, nil).should be_invalid
       end
-      
+
     end
-    
+
     describe "when the service and ticket are given" do
-      
+
       it "attempts to find the ServiceTicket by the given ticket" do
         Castronaut::Models::ServiceTicket.expects(:find_by_ticket).with('ticket').returns(stub_everything)
         Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket')
       end
-      
+
       describe "when it fails to find a service ticket returns a ticket result" do
-        
+
         it "with the ticket not recognized message" do
           Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(nil)
           Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket ticket not recognized."
@@ -128,13 +128,13 @@ describe Castronaut::Models::ServiceTicket do
           Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(nil)
           Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
         end
-        
+
       end
-            
+
       describe "when it finds a service ticket" do
-        
+
         describe "when it is already consumed it returns a ticket result" do
-          
+
           it "with the ticket used up message" do
             Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:consumed? => true))
             Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket 'ticket' has already been used up."
@@ -149,29 +149,47 @@ describe Castronaut::Models::ServiceTicket do
             Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:consumed? => true))
             Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
           end
-          
+
         end
-        
+
         describe "when it has not been consumed" do
-          
+
           it "consumes the service ticket" do
             service_ticket = stub_everything(:consumed? => false)
             service_ticket.expects(:consume!)
-            
+
             Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(service_ticket)
             Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket')
           end
-          
+
           describe "when it encounters a proxy ticket it returns a ticket result" do
-            
-            it "with the ticket is a proxy ticket message"
-            
-            it "with the INVALID_TICKET message category"
-            
-            it "is marked as invalid"
-            
+
+            it "with the ticket is a proxy ticket message" do
+              service_ticket = stub_everything(:consumed? => false, :consume! => nil)
+              service_ticket.stubs(:===).returns(true)
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(service_ticket)
+
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket', false).message.should == "Ticket 'ticket' is a proxy ticket, but only service tickets are allowed here."
+            end
+
+            it "with the INVALID_TICKET message category" do
+              service_ticket = stub_everything(:consumed? => false, :consume! => nil)
+              service_ticket.stubs(:===).returns(true)
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(service_ticket)
+
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket', false).message_category.should == "INVALID_TICKET"
+            end
+
+            it "is marked as invalid" do
+              service_ticket = stub_everything(:consumed? => false, :consume! => nil)
+              service_ticket.stubs(:===).returns(true)
+              Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(service_ticket)
+
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket', false).should be_invalid
+            end
+
           end
-          
+
           describe "when it is already expired it returns a ticket result" do
 
             it "with the ticket expired message" do
@@ -189,8 +207,8 @@ describe Castronaut::Models::ServiceTicket do
               Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
             end
 
-          end   
-          
+          end
+
           describe "when it encounters a mismatched service it returns a ticket result" do
 
             it "with the service mismatch message" do
@@ -209,13 +227,13 @@ describe Castronaut::Models::ServiceTicket do
             end
 
           end
-                 
+
         end
-        
+
       end
-      
+
     end
-    
+
   end
-  
+
 end

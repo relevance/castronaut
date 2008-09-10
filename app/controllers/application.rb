@@ -26,6 +26,12 @@ get '/serviceValidate' do
   @presenter.your_mission.call
 end
 
+get '/proxyValidate' do
+  @presenter = Castronaut::Presenters::ProxyValidate.new(self)
+  @presenter.represent!
+  @presenter.your_mission.call
+end
+
 get '/loginTicket' do
   body 'loginTicket-Get'
 end
