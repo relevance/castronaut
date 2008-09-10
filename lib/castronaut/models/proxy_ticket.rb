@@ -26,6 +26,7 @@ module Castronaut
           end
         end
 
+        Castronaut::TicketResult.new(service_ticket_result, nil, "success")
       end
 
       def ticket_prefix

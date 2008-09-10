@@ -44,6 +44,8 @@ module Castronaut
         mismatched_service_message = "The ticket '#{ticket}' belonging to user '#{service_ticket.username}' is valid, but the requested service '#{service}' does not match the service '#{service_ticket.service}' associated with this ticket."
 
         return Castronaut::TicketResult.new(service_ticket, mismatched_service_message, "INVALID_SERVICE") unless service_ticket.matches_service?(service)
+
+        Castronaut::TicketResult.new(service_ticket, nil, "success")
       end
 
       def matches_service?(other_service)

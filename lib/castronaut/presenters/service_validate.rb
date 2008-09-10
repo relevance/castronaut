@@ -41,7 +41,7 @@ module Castronaut
       end
 
       def extra_attributes
-        (@service_ticket_result.ticket_granting_ticket && @service_ticket_result.ticket_granting_ticket.extra_attributes) || {}
+        (@service_ticket_result.ticket.ticket_granting_ticket && @service_ticket_result.ticket.ticket_granting_ticket.extra_attributes) || {}
       end
 
       def client_host
