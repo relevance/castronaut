@@ -96,4 +96,4 @@ task :flog do
   exit(0)
 end
 
-task :default => [:verify_coverage, :flog]
+task :default => [:verify_coverage]#, :flog]
