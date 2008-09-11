@@ -84,6 +84,21 @@ describe Castronaut::Presenters::ProcessLogin do
     before(:each) do
       Castronaut::Models::LoginTicket.stub!(:validate_ticket).and_return(stub('login ticket', :invalid? => false))
     end
+    
+    describe "when the ticket validation result is invalid" do
+      
+      it "appends a validation failure message to the messages" do
+        Castronaut::Models::LoginTicket.stub!(:validate_ticket).and_return(stub('login ticket', :invalid? => true, :message => "STUB_MESSAGE"))
+        Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("STUB_MESSAGE")
+      end
+      
+      it "generates a new login ticket from the client host" do
+        Castronaut::Models::LoginTicket.stub!(:validate_ticket).and_return(stub('login ticket', :invalid? => true, :message => "STUB_MESSAGE"))
+        Castronaut::Models::LoginTicket.should_receive(:generate_from).with('10.1.1.1').and_return(stub('ticket', :ticket => "STUB"))
+        Castronaut::Presenters::ProcessLogin.new(@controller).represent!
+      end
+      
+    end
 
     describe "when the parameters are invalid" do
 

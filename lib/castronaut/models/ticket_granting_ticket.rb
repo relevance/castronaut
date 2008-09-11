@@ -31,10 +31,6 @@ module Castronaut
         create! :username => username, :client_hostname => client_host
       end
       
-      def extra_attributes
-        { }
-      end
-
       def ticket_prefix
         "TGC"
       end

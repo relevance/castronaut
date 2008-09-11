@@ -40,11 +40,6 @@ module Castronaut
         @proxy_ticket_result.username
       end
 
-      def extra_attributes
-        { }
-        #(@proxy_ticket_result.ticket.ticket_granting_ticket && @proxy_ticket_result.ticket.ticket_granting_ticket.extra_attributes) || {}
-      end
-
       def client_host
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
       end

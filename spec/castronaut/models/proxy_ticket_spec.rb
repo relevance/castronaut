@@ -23,7 +23,7 @@ describe Castronaut::Models::ProxyTicket do
     describe "when the service ticket result is invalid" do
 
       it "and_return the service ticket result directly" do
-        ticket_result = stub_everything(:invalid? => true)
+        ticket_result = stub('ticket result', :invalid? => true)
         ServiceTicket.stub!(:validate_ticket).and_return(ticket_result)
         
         ProxyTicket.validate_ticket('service', 'ticket').should == ticket_result
@@ -74,6 +74,32 @@ describe Castronaut::Models::ProxyTicket do
           ProxyTicket.validate_ticket('service', 'ticket').should be_invalid
         end
 
+      end
+
+    end
+    
+    describe "when the service ticket result is valid" do
+
+      it "returns a ticket result with the service results ticket" do
+        ticket_result = stub('ticket result', :invalid? => false, :ticket => "STUB")
+        ServiceTicket.stub!(:validate_ticket).and_return(ticket_result)
+        
+        ProxyTicket.validate_ticket('service', 'ticket').ticket.should == "STUB"
+      end
+
+      it "returns a ticket result with the 'success' message category" do
+        ticket_result = stub('ticket result', :invalid? => false, :ticket => "STUB")
+        ServiceTicket.stub!(:validate_ticket).and_return(ticket_result)
+        
+        ProxyTicket.validate_ticket('service', 'ticket').message_category.should == 'success'
+      end
+
+
+      it "returns a ticket result that is valid" do
+        ticket_result = stub('ticket result', :invalid? => false, :ticket => "STUB")
+        ServiceTicket.stub!(:validate_ticket).and_return(ticket_result)
+        
+        ProxyTicket.validate_ticket('service', 'ticket').should be_valid
       end
 
     end

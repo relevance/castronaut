@@ -40,10 +40,6 @@ module Castronaut
         @service_ticket_result.username
       end
 
-      def extra_attributes
-        (@service_ticket_result.ticket.ticket_granting_ticket && @service_ticket_result.ticket.ticket_granting_ticket.extra_attributes) || {}
-      end
-
       def client_host
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
       end
