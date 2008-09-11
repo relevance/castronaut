@@ -34,17 +34,16 @@ describe Castronaut::Presenters::ProxyValidate do
 
     it "gets :proxy_granting_ticket_url out of params['pgtUrl']" do
       @controller.params['pgtUrl'] = 'http://example.com/'
+
       Castronaut::Presenters::ProxyValidate.new(@controller).proxy_granting_ticket_url.should == 'http://example.com/'
     end
 
-    it "gets :proxy_granting_ticket_iou from the proxy_granting_ticket_result when present"
-
     describe "represent!" do
 
-      it "validates the service ticket" do
+      it "validates the proxy ticket" do
         @controller.params['service'] = 'http://example.com'
         @controller.params['ticket'] = 'footicket'
-        Castronaut::Models::ServiceTicket.expects(:validate_ticket).with('http://example.com', 'footicket', true).returns(stub_everything(:valid? => false))
+        Castronaut::Models::ProxyTicket.expects(:validate_ticket).with('http://example.com', 'footicket').returns(stub_everything(:valid? => false))
         Castronaut::Presenters::ProxyValidate.new(@controller).represent!
       end
 
@@ -55,21 +54,37 @@ describe Castronaut::Presenters::ProxyValidate do
           @controller.params['ticket'] = 'footicket'
         end
 
+        it "exposes the proxy ticket result as :proxy_ticket_result" do
+          proxy_ticket_result = stub_everything(:valid? => false, :ticket_granting_ticket => stub_everything(:extra_attributes => 'foobar hash'))
+          Castronaut::Models::ProxyTicket.expects(:validate_ticket).returns(proxy_ticket_result)
+          Castronaut::Presenters::ProxyValidate.new(@controller).represent!.proxy_ticket_result.should == proxy_ticket_result
+        end
+        
         it "exposes the service ticket username as :username" do
-          Castronaut::Models::ServiceTicket.expects(:validate_ticket).returns(stub_everything(:valid? => true, :username => 'bubba'))
+          Castronaut::Models::ProxyTicket.expects(:validate_ticket).returns(stub_everything(:valid? => true, :username => 'bubba'))
           Castronaut::Presenters::ProxyValidate.new(@controller).represent!.username.should == 'bubba'
         end
 
         it "exposes the extra attributes" do
-          Castronaut::Models::ServiceTicket.expects(:validate_ticket).returns(stub_everything(:valid? => false, :ticket_granting_ticket => stub_everything(:extra_attributes => 'foobar hash')))
+          Castronaut::Models::ProxyTicket.expects(:validate_ticket).returns(stub_everything(:valid? => false, :ticket_granting_ticket => stub_everything(:extra_attributes => 'foobar hash')))
           Castronaut::Presenters::ProxyValidate.new(@controller).represent!.extra_attributes == 'foobar hash'
+        end
+
+        describe "when the proxy ticket result is a proxy ticket" do
+          
+          it "creates an array of proxies from the proxy ticket results service ticket service" do
+            service_ticket = stub_everything(:service => 'http://myservice.com')
+            Castronaut::Models::ProxyTicket.expects(:validate_ticket).returns(stub_everything(:valid? => true, :service_ticket => service_ticket))
+            Castronaut::Presenters::ProxyValidate.new(@controller).represent!.extra_attributes == 'foobar hash'
+          end
+
         end
 
         describe "when a proxy granting ticket url is present" do
 
           it "attempts to generate a proxy granting ticket" do
             @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
-            Castronaut::Models::ServiceTicket.stubs(:validate_ticket).returns(stub_everything(:valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub_everything(:extra_attributes => 'foobar hash')))
+            Castronaut::Models::ProxyTicket.stubs(:validate_ticket).returns(stub_everything(:valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub_everything(:extra_attributes => 'foobar hash')))
 
             Castronaut::Models::ProxyGrantingTicket.expects(:generate_ticket).with('http://proxygrantingticketurl', '10.1.1.1', anything).returns(stub_everything)
             Castronaut::Presenters::ProxyValidate.new(@controller).represent!
@@ -77,7 +92,13 @@ describe Castronaut::Presenters::ProxyValidate do
 
           describe "when proxy granting ticket generation succeeds" do
 
-            it "exposes proxy granting ticket iou as :iou"
+            it "gets :proxy_granting_ticket_iou from the proxy_granting_ticket_result" do
+              @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
+              Castronaut::Models::ProxyTicket.stubs(:validate_ticket).returns(stub_everything(:valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub_everything(:extra_attributes => 'foobar hash')))
+              Castronaut::Models::ProxyGrantingTicket.stubs(:generate_ticket).returns(stub_everything(:iou => 'pgtiou'))
+
+              Castronaut::Presenters::ProxyValidate.new(@controller).represent!.proxy_granting_ticket_iou.should == 'pgtiou'
+            end
 
           end
 

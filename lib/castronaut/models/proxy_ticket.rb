@@ -32,6 +32,10 @@ module Castronaut
       def ticket_prefix
         "PT"
       end
+      
+      def proxies
+        [proxy_granting_ticket.service_ticket.service]
+      end
 
     end
 

@@ -42,6 +42,12 @@ module Castronaut
         "LT"
       end
       
+      def username
+      end
+      
+      def proxies
+      end
+      
     end
 
   end

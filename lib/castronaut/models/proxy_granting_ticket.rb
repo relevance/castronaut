@@ -52,6 +52,13 @@ module Castronaut
       def dispense_iou
         write_attribute(:iou, "PGTIOU-#{Castronaut::Utilities::RandomString.generate(57)}") if iou.nil?
       end
+      
+      def username
+      end
+      
+      def proxies
+      end
+      
     end
     
   end

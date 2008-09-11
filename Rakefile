@@ -69,5 +69,3 @@ namespace :ssl do
   end
 
 end
-
-

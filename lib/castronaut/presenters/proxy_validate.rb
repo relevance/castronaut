@@ -4,7 +4,7 @@ module Castronaut
     class ProxyValidate
       MissingCredentialsMessage = "Please supply a username and password to login."
 
-      attr_reader :controller, :your_mission
+      attr_reader :controller, :your_mission, :proxy_ticket_result, :proxies
       attr_accessor :messages, :login_ticket
 
       delegate :params, :request, :to => :controller
@@ -49,21 +49,11 @@ module Castronaut
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
       end
 
-      def proxy_ticket_result
-        @proxy_ticket_result
-      end
-
-      def proxies
-        @proxies
-      end
-
       def represent!
         @proxy_ticket_result = Castronaut::Models::ProxyTicket.validate_ticket(service, ticket)
 
         if @proxy_ticket_result.valid?
-          if @proxy_ticket_result === Castronaut::Models::ProxyTicket
-            @proxies = [@proxy_ticket_result.service_ticket.service]
-          end
+          @proxies = @proxy_ticket_result.proxies
 
           if proxy_granting_ticket_url
             @proxy_granting_ticket_result = Castronaut::Models::ProxyGrantingTicket.generate_ticket(proxy_granting_ticket_url, client_host, @proxy_ticket_result.ticket)
@@ -79,3 +69,4 @@ module Castronaut
 
   end
 end
+

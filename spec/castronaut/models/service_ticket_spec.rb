@@ -1,28 +1,34 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_helper'))
 
+include Castronaut::Models
+
 describe Castronaut::Models::ServiceTicket do
 
+  it "has no proxies" do
+    ServiceTicket.new.proxies.should be_nil
+  end
+  
   it "has a ticket prefix of ST" do
-    Castronaut::Models::ServiceTicket.new.ticket_prefix.should == 'ST'
+    ServiceTicket.new.ticket_prefix.should == 'ST'
   end
 
   describe "service uri" do
 
     it "returns nil if no service is present" do
-      Castronaut::Models::ServiceTicket.new.service_uri.should be_nil
+      ServiceTicket.new.service_uri.should be_nil
     end
 
     it "tries to parse service using URI.parse" do
       URI.expects(:parse).with('http://example.com')
 
-      service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com')
+      service_ticket = ServiceTicket.new(:service => 'http://example.com')
       service_ticket.service_uri
     end
 
     describe "when the service has an existing querystring" do
 
       it "appends the ticket to the service querystring" do
-        service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com?foo=bar', :ticket => 'my_ticket')
+        service_ticket = ServiceTicket.new(:service => 'http://example.com?foo=bar', :ticket => 'my_ticket')
         service_ticket.service_uri.should == "http://example.com?foo=bar&ticket=my_ticket"
       end
 
@@ -31,7 +37,7 @@ describe Castronaut::Models::ServiceTicket do
     describe "when the service has no querystring" do
 
       it "adds a querystring containing the ticket to the service" do
-        service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com', :ticket => 'my_ticket')
+        service_ticket = ServiceTicket.new(:service => 'http://example.com', :ticket => 'my_ticket')
         service_ticket.service_uri.should == "http://example.com?ticket=my_ticket"
       end
 
@@ -40,7 +46,7 @@ describe Castronaut::Models::ServiceTicket do
     describe "when the service has a querystring of '?' only" do
 
       it "removes the question mark" do
-        service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'http://example.com?', :ticket => 'my_ticket')
+        service_ticket = ServiceTicket.new(:service => 'http://example.com?', :ticket => 'my_ticket')
         service_ticket.service_uri.should == "http://example.com?ticket=my_ticket"
       end
 
@@ -51,12 +57,12 @@ describe Castronaut::Models::ServiceTicket do
       it "handles the URI::InvalidURIError" do
         URI.expects(:parse).raises(URI::InvalidURIError)
 
-        service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'invalid uri here', :ticket => 'my_ticket')
+        service_ticket = ServiceTicket.new(:service => 'invalid uri here', :ticket => 'my_ticket')
         service_ticket.service_uri
       end
 
       it "returns nil" do
-        service_ticket = Castronaut::Models::ServiceTicket.new(:service => 'invalid uri here', :ticket => 'my_ticket')
+        service_ticket = ServiceTicket.new(:service => 'invalid uri here', :ticket => 'my_ticket')
         service_ticket.service_uri.should be_nil
       end
 
@@ -67,11 +73,11 @@ describe Castronaut::Models::ServiceTicket do
   describe "generate ticket for" do
 
     it "delegates to create!" do
-      ticket = Castronaut::Models::TicketGrantingTicket.new :username => 'foo'
+      ticket = TicketGrantingTicket.new :username => 'foo'
 
-      Castronaut::Models::ServiceTicket.expects(:create!).with(:service => 'service', :client_hostname => 'client_host', :username => 'foo', :ticket_granting_ticket => ticket)
+      ServiceTicket.expects(:create!).with(:service => 'service', :client_hostname => 'client_host', :username => 'foo', :ticket_granting_ticket => ticket)
 
-      Castronaut::Models::ServiceTicket.generate_ticket_for('service', 'client_host', ticket)
+      ServiceTicket.generate_ticket_for('service', 'client_host', ticket)
     end
 
   end
@@ -226,6 +232,28 @@ describe Castronaut::Models::ServiceTicket do
               Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_invalid
             end
 
+          end
+
+          
+        end
+      
+
+        describe "when ticket validation was successful and no branches were encountered" do
+          
+          before do
+            Castronaut::Models::ServiceTicket.stubs(:find_by_ticket).returns(stub_everything(:matches_service? => true))
+          end
+
+          it "returns a ticket result with a nil message" do
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should be_nil
+          end
+
+          it "returns a ticket result with a message category of 'success'" do
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message_category.should == 'success'
+          end
+
+          it "returns a valid ticket result" do
+            Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').should be_valid
           end
 
         end
