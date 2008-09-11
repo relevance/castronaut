@@ -42,38 +42,6 @@ describe 'Castronaut Application Controller' do
       headers['Expires'].should == "Wed, 01 Jan 2003 00:00:00 -0500"
     end
 
-    xit "gets the service from params[:service]"
-
-    xit "gets renewal? from params[:renew]"
-
-    xit "determines if this is a gateway? from params[:gateway]"
-
-    describe "when you have a ticket generating ticket cookie" do
-
-      xit "validates it using the ticket generating ticket validator"
-
-      xit "returns the validator object"
-
-      xit "returns whether or not an error occured during validation"
-
-      describe "when there was an error validating" do
-
-        xit "sets a display message for the view"
-
-      end
-
-    end
-
-    describe "when a redirection loop is detected" do
-
-      it "sets a display message for the view" do
-        get_it '/login', 'redirection_loop_intercepted' => 'any old thing', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
-        
-        body.should include("The client and server are unable to negotiate authentication.")
-      end
-
-    end
-
   end
 
   describe "requesting /login via POST" do
@@ -86,20 +54,20 @@ describe 'Castronaut Application Controller' do
 
   end
 
-  describe "requesting /validate via GET" do
+  describe "requesting /serviceValidate via GET" do
 
     it 'responds with status 200' do
-      get_it '/validate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
+      get_it '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
 
   end
-
-  describe "requesting /serviceValidate via GET" do
+  
+  describe "requesting /proxyValidate via GET" do
 
     it 'responds with status 200' do
-      get_it '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
+      get_it '/proxyValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end

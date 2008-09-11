@@ -16,10 +16,6 @@ post '/login' do
   @presenter.your_mission.call
 end
 
-get '/validate' do
-  body 'Validate-Get'
-end
-
 get '/serviceValidate' do
   @presenter = Castronaut::Presenters::ServiceValidate.new(self)
   @presenter.represent!
