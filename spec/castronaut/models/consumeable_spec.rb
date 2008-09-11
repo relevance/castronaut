@@ -5,7 +5,7 @@ describe Castronaut::Models::Consumeable do
   class FakeModel
     include Castronaut::Models::Consumeable
 
-    attr_accessor :consumed_at
+    attr_accessor :consumed_at, :id
     
     def save!
       
@@ -15,23 +15,25 @@ describe Castronaut::Models::Consumeable do
   describe "consume!" do
   
     it "sets consumed to the current time" do
-      FakeModel.any_instance.expects(:consumed_at=)
-      FakeModel.new.consume!
+      fake_model = stub_model(FakeModel).as_new_record
+      fake_model.should_receive(:consumed_at=)
+      fake_model.consume!
     end
     
     it "calls save!" do
-      FakeModel.any_instance.expects(:save!)
-      FakeModel.new.consume!      
+      fake_model = stub_model(FakeModel).as_new_record
+      fake_model.should_receive(:save!)
+      fake_model.consume!
     end
   
   end
   
   it "is consumed when consumed_at has a value" do
-    fm = FakeModel.new
-    fm.should_not be_consumed
+    fake_model = FakeModel.new
+    fake_model.should_not be_consumed
     
-    fm.consumed_at = Time.now
-    fm.should be_consumed
+    fake_model.consumed_at = Time.now
+    fake_model.should be_consumed
   end
   
 end

@@ -1,12 +1,12 @@
 require 'rubygems'
 
 gem :rspec, '>= 1.1.4'
-gem :mocha, '>= 0.9.1'
 gem :activerecord, '>= 2.1.0'
 
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
+require File.join(File.dirname(__FILE__), 'spec_rails_mocks')
 
-Castronaut.config = Castronaut::Configuration.new(File.join(File.dirname(__FILE__), '..', 'castronaut.example.yml'))
+Castronaut.config = Castronaut::Configuration.load(File.join(File.dirname(__FILE__), '..', 'castronaut.example.yml'))
 
 class CreateUsers < ActiveRecord::Migration
   old_connection = ActiveRecord::Base.connection
@@ -30,5 +30,5 @@ class CreateUsers < ActiveRecord::Migration
 end
 
 Spec::Runner.configure do |config|
-  config.mock_with :mocha
+  config.include Spec::Rails::Mocks
 end

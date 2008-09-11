@@ -18,10 +18,10 @@ describe Castronaut::TicketResult do
 
     it "negates invalid? for it's result" do
       ticket_result = Castronaut::TicketResult.new('ticket', 'msg', 'cat')
-      ticket_result.stubs(:invalid?).returns(false)
+      ticket_result.stub!(:invalid?).and_return(false)
       ticket_result.should be_valid
       
-      ticket_result.stubs(:invalid?).returns(true)
+      ticket_result.stub!(:invalid?).and_return(true)
       ticket_result.should_not be_valid
     end
   

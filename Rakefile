@@ -41,7 +41,7 @@ else
   Spec::Rake::SpecTask.new('coverage') do |t|
     t.spec_files = FileList['spec/**/*.rb']
     t.rcov = true
-    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library,lib/castronaut/db', '--text-report']
+    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library,lib/castronaut/db', '--text-report', '--sort', 'coverage']
     t.spec_opts = ['-cfn']
   end
 

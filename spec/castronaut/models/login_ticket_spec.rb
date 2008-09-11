@@ -24,7 +24,7 @@ describe Castronaut::Models::LoginTicket do
 
   it "requires a ticket" do
     login_ticket = LoginTicket.new :client_hostname => 'http://example.com'
-    login_ticket.stubs(:dispense_ticket)
+    login_ticket.stub!(:dispense_ticket)
 
     login_ticket.should_not be_valid
     login_ticket.errors.on(:ticket).should_not be_nil
@@ -33,7 +33,7 @@ describe Castronaut::Models::LoginTicket do
   describe "generating from a client hostname" do
 
     it "creates a new Login Ticket with given client hostname" do
-      LoginTicket.expects(:create!).with(:client_hostname => 'ch')
+      LoginTicket.should_receive(:create!).with(:client_hostname => 'ch')
       LoginTicket.generate_from('ch')
     end
 
@@ -44,22 +44,22 @@ describe Castronaut::Models::LoginTicket do
     describe "when the ticket is missing" do
       
       it "returns a ticket result with the MissingMessage" do
-        Castronaut::TicketResult.expects(:new).with(nil, LoginTicket::MissingMessage)
+        Castronaut::TicketResult.should_receive(:new).with(nil, LoginTicket::MissingMessage)
         LoginTicket.validate_ticket(nil)
       end
       
     end
     
     it "attempts to the find the login ticket using the given ticket" do
-      LoginTicket.expects(:find_by_ticket).with("ticket").returns(nil)
+      LoginTicket.should_receive(:find_by_ticket).with("ticket").and_return(nil)
       LoginTicket.validate_ticket("ticket")
     end
     
     describe "when the ticket is invalid" do
       
       it "returns a ticket result with the InvalidMessage" do
-        Castronaut::TicketResult.expects(:new).with(nil, LoginTicket::InvalidMessage)
-        LoginTicket.stubs(:find_by_ticket).returns(nil)
+        Castronaut::TicketResult.should_receive(:new).with(nil, LoginTicket::InvalidMessage)
+        LoginTicket.stub!(:find_by_ticket).and_return(nil)
         LoginTicket.validate_ticket("ticket")
       end
       
@@ -72,8 +72,8 @@ describe Castronaut::Models::LoginTicket do
         it "returns a ticket result with the AlreadyConsumedMessage" do
           login_ticket = stub_everything(:consumed? => true)
           
-          Castronaut::TicketResult.expects(:new).with(login_ticket, LoginTicket::AlreadyConsumedMessage)
-          LoginTicket.stubs(:find_by_ticket).returns(login_ticket)
+          Castronaut::TicketResult.should_receive(:new).with(login_ticket, LoginTicket::AlreadyConsumedMessage)
+          LoginTicket.stub!(:find_by_ticket).and_return(login_ticket)
           LoginTicket.validate_ticket("ticket")
         end
         
@@ -82,20 +82,20 @@ describe Castronaut::Models::LoginTicket do
       describe "and it has already expired" do
         
         it "returns a ticket result with the ExpiredMessage" do
-          login_ticket = stub_everything(:expired? => true, :consumed? => false)
+          login_ticket = stub_model(LoginTicket, :expired? => true, :consumed? => false)
+          LoginTicket.stub!(:find_by_ticket).and_return(login_ticket)
           
-          Castronaut::TicketResult.expects(:new).with(login_ticket, LoginTicket::ExpiredMessage)
-          LoginTicket.stubs(:find_by_ticket).returns(login_ticket)
+          Castronaut::TicketResult.should_receive(:new).with(login_ticket, LoginTicket::ExpiredMessage)
           LoginTicket.validate_ticket("ticket")
         end
         
       end
       
       it "consumes the ticket" do
-        login_ticket = stub_everything(:expired? => false, :consumed? => false)
-        login_ticket.expects(:consume!)
+        login_ticket = stub_model(LoginTicket, :expired? => false, :consumed? => false)
+        login_ticket.should_receive(:consume!)
         
-        LoginTicket.stubs(:find_by_ticket).returns(login_ticket)
+        LoginTicket.stub!(:find_by_ticket).and_return(login_ticket)
 
         LoginTicket.validate_ticket("ticket")
       end

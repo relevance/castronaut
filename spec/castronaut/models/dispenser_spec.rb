@@ -22,7 +22,7 @@ describe Castronaut::Models::Dispenser do
   end
   
   it "generates the ticket using the classes ticket prefix and a random string" do
-    Castronaut::Utilities::RandomString.stubs(:generate).returns("RANDOM")
+    Castronaut::Utilities::RandomString.stub!(:generate).and_return("RANDOM")
     
     Foo::Bar::FakeModel.new.send(:dispense_ticket).should == "WOO!-RANDOM"
   end

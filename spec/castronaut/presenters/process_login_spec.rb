@@ -3,10 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 describe Castronaut::Presenters::ProcessLogin do
 
   before do
-    @controller = mock('controller')
-    @controller.stubs(:params).returns({ })
-    @controller.stubs(:request).returns(stub(:cookies => {}, :env => { 'REMOTE_ADDR' => '10.1.1.1' }))
-    @controller.stubs(:erb)
+    @controller = stub('controller', :params => {}, :erb => nil, :request => stub('request', :cookies => {}, :env => { 'REMOTE_ADDR' => '10.1.1.1'}))
   end
 
   describe "initialization" do
@@ -85,7 +82,7 @@ describe Castronaut::Presenters::ProcessLogin do
   describe "represent!" do
 
     before(:each) do
-      Castronaut::Models::LoginTicket.stubs(:validate_ticket).returns(stub_everything(:invalid? => false))
+      Castronaut::Models::LoginTicket.stub!(:validate_ticket).and_return(stub('login ticket', :invalid? => false))
     end
 
     describe "when the parameters are invalid" do
@@ -93,7 +90,7 @@ describe Castronaut::Presenters::ProcessLogin do
       describe "when the username is blank" do
 
         it "appends the MissingCredentialsMessage to messages" do
-          @controller.params['passsword'] = 'password'
+          @controller.params['password'] = 'password'
           @controller.params['username'] = ''
           Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("Please supply a username and password to login.")
         end
@@ -103,7 +100,7 @@ describe Castronaut::Presenters::ProcessLogin do
       describe "when the password is blank" do
 
         it "appends the MissingCredentialsMessage to messages" do
-          @controller.params['passsword'] = ''
+          @controller.params['password'] = ''
           @controller.params['username'] = 'username'
           Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("Please supply a username and password to login.")
         end
@@ -115,13 +112,13 @@ describe Castronaut::Presenters::ProcessLogin do
     describe "when the parameters are valid" do
 
       before(:each) do
-        @controller.stubs(:params).returns({ 'username' => 'username', 'password' => 'password', 'service' => ''})
+        @controller.stub!(:params).and_return({ 'username' => 'username', 'password' => 'password', 'service' => ''})
       end
 
       it "attempts to authenticate" do
         adapter = stub_everything(:authenticate => 'result')
-        Castronaut::Adapters.stubs(:selected_adapter).returns(adapter)
-        adapter.expects(:authenticate).with('username', 'password').returns(stub_everything(:valid? => false))
+        Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
+        adapter.should_receive(:authenticate).with('username', 'password').and_return(stub('auth result', :valid? => false, :error_message => 'nil'))
         Castronaut::Presenters::ProcessLogin.new(@controller).represent!
       end
 
@@ -129,8 +126,8 @@ describe Castronaut::Presenters::ProcessLogin do
 
         it "appends a could not authenticate message to the messages" do
           adapter = stub_everything(:authenticate => 'result')
-          Castronaut::Adapters.stubs(:selected_adapter).returns(adapter)
-          adapter.stubs(:authenticate).with('username', 'password').returns(stub_everything(:valid? => false, :error_message => "oggie boogie"))
+          Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
+          adapter.stub!(:authenticate).with('username', 'password').and_return(stub('auth result', :valid? => false, :error_message => "oggie boogie"))
           Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("oggie boogie")
         end
 
@@ -140,19 +137,19 @@ describe Castronaut::Presenters::ProcessLogin do
 
         before(:each) do
           adapter = stub_everything(:authenticate => 'result')
-          Castronaut::Adapters.stubs(:selected_adapter).returns(adapter)
-          adapter.stubs(:authenticate).with('username', 'password').returns(stub_everything(:valid? => true))
+          Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
+          adapter.stub!(:authenticate).with('username', 'password').and_return(stub_everything(:valid? => true))
         end
 
         it "generates a ticket granting ticket" do
-          Castronaut::Models::TicketGrantingTicket.expects(:generate_for).returns(stub_everything(:to_cookie => 'cookie'))
+          Castronaut::Models::TicketGrantingTicket.should_receive(:generate_for).and_return(stub_everything(:to_cookie => 'cookie'))
           Castronaut::Presenters::ProcessLogin.new(@controller).represent!
         end
 
         describe "when the service is blank" do
 
           it "appends a successful login message to the messages" do
-            Castronaut::Models::TicketGrantingTicket.stubs(:generate_for).returns(stub_everything(:to_cookie => 'cookie'))
+            Castronaut::Models::TicketGrantingTicket.stub!(:generate_for).and_return(stub_everything(:to_cookie => 'cookie'))
             Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("You have successfully logged in.")
           end
 
@@ -161,22 +158,22 @@ describe Castronaut::Presenters::ProcessLogin do
         describe "when the service exists" do
 
           before(:each) do
-            @controller.stubs(:params).returns({ 'username' => 'username', 'password' => 'password', 'service' => 'service'})
+            @controller.stub!(:params).and_return({ 'username' => 'username', 'password' => 'password', 'service' => 'service'})
             adapter = stub_everything(:authenticate => 'result')
-            Castronaut::Adapters.stubs(:selected_adapter).returns(adapter)
-            adapter.stubs(:authenticate).with('username', 'password').returns(stub_everything(:valid? => true))
-            Castronaut::Models::TicketGrantingTicket.stubs(:generate_for).returns(stub_everything(:to_cookie => 'cookie'))
+            Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
+            adapter.stub!(:authenticate).with('username', 'password').and_return(stub('auth result', :valid? => true))
+            Castronaut::Models::TicketGrantingTicket.stub!(:generate_for).and_return(stub('ticket granting ticket', :to_cookie => 'cookie'))
           end
 
           it "generates a service ticket" do
-            Castronaut::Models::ServiceTicket.expects(:generate_ticket_for).with('service', '10.1.1.1', anything)
+            Castronaut::Models::ServiceTicket.should_receive(:generate_ticket_for).with('service', '10.1.1.1', anything)
             Castronaut::Presenters::ProcessLogin.new(@controller).represent!
           end
 
           describe "when the service_uri is invalid" do
 
             it "appends an invalid uri message to the messages" do
-              Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).with('service', '10.1.1.1', anything).returns(stub_everything(:service_uri => false))
+              Castronaut::Models::ServiceTicket.stub!(:generate_ticket_for).with('service', '10.1.1.1', anything).and_return(stub('service ticket', :service_uri => false))
               Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")
             end
 
@@ -185,8 +182,8 @@ describe Castronaut::Presenters::ProcessLogin do
           describe "when the service_uri is valid" do
 
             it "redirects back to service" do
-              Castronaut::Models::ServiceTicket.stubs(:generate_ticket_for).with('service', '10.1.1.1', anything).returns(stub_everything(:service_uri => :service_uri_stub))
-              @controller.expects(:redirect).with(:service_uri_stub, 303)
+              Castronaut::Models::ServiceTicket.stub!(:generate_ticket_for).with('service', '10.1.1.1', anything).and_return(stub('service ticket', :service_uri => :service_uri_stub))
+              @controller.should_receive(:redirect).with(:service_uri_stub, 303)
               process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
               process_login.represent!
               process_login.instance_variable_get("@your_mission").call

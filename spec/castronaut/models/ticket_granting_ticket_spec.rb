@@ -29,7 +29,7 @@ describe Castronaut::Models::TicketGrantingTicket do
     describe "when given a ticket" do
 
       it "attempts to find the ticket granting ticket in the database" do
-        TicketGrantingTicket.expects(:find_by_ticket).returns(nil)
+        TicketGrantingTicket.should_receive(:find_by_ticket).and_return(nil)
         TicketGrantingTicket.validate_cookie('abc')
       end
 
@@ -37,13 +37,13 @@ describe Castronaut::Models::TicketGrantingTicket do
 
         before do
           @ticket_granting_ticket = TicketGrantingTicket.new
-          @ticket_granting_ticket.stubs(:username).returns('bob_smith')
-          @ticket_granting_ticket.stubs(:expired?).returns(false)
-          TicketGrantingTicket.stubs(:find_by_ticket).returns(@ticket_granting_ticket)
+          @ticket_granting_ticket.stub!(:username).and_return('bob_smith')
+          @ticket_granting_ticket.stub!(:expired?).and_return(false)
+          TicketGrantingTicket.stub!(:find_by_ticket).and_return(@ticket_granting_ticket)
         end
 
         it "returns an error message if the ticket granting ticket is expired" do
-          @ticket_granting_ticket.stubs(:expired?).returns(true)
+          @ticket_granting_ticket.stub!(:expired?).and_return(true)
           TicketGrantingTicket.validate_cookie('abc').message.should == "Your session has expired. Please log in again."
         end
 
@@ -54,7 +54,7 @@ describe Castronaut::Models::TicketGrantingTicket do
     describe "in all other cases" do
 
       it "returns a TicketResult with no error message" do
-        TicketGrantingTicket.stubs(:find_by_ticket).returns(nil)
+        TicketGrantingTicket.stub!(:find_by_ticket).and_return(nil)
         TicketGrantingTicket.validate_cookie('abc').message.should be_nil
       end
 
@@ -65,7 +65,7 @@ describe Castronaut::Models::TicketGrantingTicket do
   describe "generating for a username and client host" do
 
     it "delegates to :create!" do
-      TicketGrantingTicket.expects(:create!).with(:username => 'username', :client_hostname => 'client_host')
+      TicketGrantingTicket.should_receive(:create!).with(:username => 'username', :client_hostname => 'client_host')
       TicketGrantingTicket.generate_for('username', 'client_host')
     end
 

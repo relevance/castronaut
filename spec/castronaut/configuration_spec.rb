@@ -10,65 +10,91 @@ describe Castronaut::Configuration do
   describe "initialization" do
     
     it "defaults the config file path to ./castronaut.yml if none is given" do
-      Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
-      Castronaut::Configuration.any_instance.stubs(:parse_yaml_config).returns({})
-      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
-      Castronaut::Configuration.new.config_file_path.should == './castronaut.yml'
+      Castronaut::Configuration.stub!(:parse_yaml_config).and_return({})
+
+      config = Castronaut::Configuration.new
+      config.stub!(:parse_config_into_settings)
+      config.stub!(:connect_activerecord)
+      config.stub!(:setup_logger).and_return(stub_everything)
+      Castronaut::Configuration.stub!(:new).and_return(config)
+
+      Castronaut::Configuration.load.config_file_path.should == './castronaut.yml'
     end
 
     it "uses whatever file path is passed to it as the alternate path" do
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
-      Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
-      Castronaut::Configuration.any_instance.stubs(:parse_yaml_config).returns({})
-      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
-      Castronaut::Configuration.new("/foo/bar/baz").config_file_path.should == '/foo/bar/baz'
+      Castronaut::Configuration.stub!(:parse_yaml_config).and_return({})
+
+      config = Castronaut::Configuration.new
+      config.stub!(:parse_config_into_settings)
+      config.stub!(:connect_activerecord)
+      config.stub!(:setup_logger).and_return(stub_everything)
+      Castronaut::Configuration.stub!(:new).and_return(config)
+      
+      Castronaut::Configuration.load("/foo/bar/baz").config_file_path.should == '/foo/bar/baz'
     end
         
     it "parses the file with YAML::load_file into a hash" do
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
-      Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
-      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
-      Castronaut::Configuration.new(@test_config_file).config_file_path.should include('castronaut.example.yml')
+      YAML.should_receive(:load_file).with(/castronaut\.example\.yml/).and_return({})
+
+      config = Castronaut::Configuration.new
+      config.stub!(:parse_config_into_settings)
+      config.stub!(:connect_activerecord)
+      config.stub!(:setup_logger).and_return(stub_everything)
+      Castronaut::Configuration.stub!(:new).and_return(config)
+            
+      Castronaut::Configuration.load(@test_config_file)
     end
     
     it "exposes the loaded YAML config at :config_hash" do
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
-      Castronaut::Configuration.any_instance.stubs(:parse_config_into_settings)
-      Castronaut::Configuration.any_instance.stubs(:parse_yaml_config).returns(:config_hash)
-      Castronaut::Configuration.any_instance.stubs(:setup_logger).returns(stub_everything)
-      Castronaut::Configuration.new(@test_config_file).config_hash.should == :config_hash
+      config_hash = {}
+      Castronaut::Configuration.stub!(:parse_yaml_config).and_return(config_hash)
+
+      config = Castronaut::Configuration.new
+      config.stub!(:parse_config_into_settings)
+      config.stub!(:connect_activerecord)
+      config.stub!(:setup_logger).and_return(stub_everything)
+      Castronaut::Configuration.stub!(:new).and_return(config)
+            
+      Castronaut::Configuration.load(@test_config_file).config_hash = config_hash
     end
     
     it "creates the log directory if it doesn't already exist" do
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
-      File.stubs(:exist?).returns(false)
-      FileUtils.expects(:mkdir_p)
-      Castronaut::Configuration.new(@test_config_file)
+      config = Castronaut::Configuration.new
+      config.stub!(:connect_activerecord)
+      Castronaut::Configuration.stub!(:new).and_return(config)
+      
+      File.stub!(:exist?).and_return(false)
+      FileUtils.should_receive(:mkdir_p)
+      Castronaut::Configuration.load(@test_config_file)
     end
     
     it "creates an instance of Logger pointing to the log directory" do
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
-      Logger.expects(:new).with("log/castronaut.log", anything).returns(stub_everything)
+      config = Castronaut::Configuration.new
+      config.stub!(:connect_activerecord)
+      Castronaut::Configuration.stub!(:new).and_return(config)
       
-      Castronaut::Configuration.new(@test_config_file)
+      Logger.should_receive(:new).with("log/castronaut.log", anything).and_return(stub_everything)
+      
+      Castronaut::Configuration.load(@test_config_file)
     end
     
     it "exposes the logger at :logger" do
       
-      Castronaut::Configuration.new(@test_config_file).logger.should_not be_nil
+      Castronaut::Configuration.load(@test_config_file).logger.should_not be_nil
     end
     
     it "sets the loggers level from the configuration" do
-      Castronaut::Configuration.new(@test_config_file).logger.level.should == Logger::DEBUG
+      Castronaut::Configuration.load(@test_config_file).logger.level.should == Logger::DEBUG
     end
     
     it "rotates the logger daily" do
-      Castronaut::Configuration.any_instance.stubs(:connect_activerecord)
+      config = Castronaut::Configuration.new
+      config.stub!(:connect_activerecord)
+      Castronaut::Configuration.stub!(:new).and_return(config)
+            
+      Logger.should_receive(:new).with("log/castronaut.log", "daily").and_return(stub_everything)
       
-      Logger.expects(:new).with("log/castronaut.log", "daily").returns(stub_everything)
-      
-      Castronaut::Configuration.new(@test_config_file)
+      Castronaut::Configuration.load(@test_config_file)
     end
         
   end
@@ -88,11 +114,11 @@ describe Castronaut::Configuration do
       describe config_setting do
         
         it "defines a method for the #{config_setting}" do
-          Castronaut::Configuration.new(@test_config_file).respond_to?(config_setting).should be_true        
+          Castronaut::Configuration.load(@test_config_file).respond_to?(config_setting).should be_true        
         end
 
         it "sets the #{config_setting} to the value of the same key in the YAML config" do
-          Castronaut::Configuration.new(@test_config_file).send(config_setting).should == @yml_config[config_setting]
+          Castronaut::Configuration.load(@test_config_file).send(config_setting).should == @yml_config[config_setting]
         end
         
       end

@@ -35,7 +35,7 @@ describe 'Castronaut Application Controller' do
 
     it "sets the Expires header to '5 years ago in rfc2822 format'" do
       now = Time.parse("01/01/2008")
-      Time.stubs(:now).returns(now)
+      Time.stub!(:now).and_return(now)
 
       get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
@@ -100,26 +100,6 @@ describe 'Castronaut Application Controller' do
 
     it 'responds with status 200' do
       get_it '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
-
-      should be_ok
-    end
-
-  end
-
-  describe "requesting /loginTicket via GET" do
-
-    it 'responds with status 200' do
-      get_it '/loginTicket', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
-
-      should be_ok
-    end
-
-  end
-
-  describe "requesting /loginTicket via POST" do
-
-    it 'responds with status 200' do
-      post_it '/loginTicket', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       should be_ok
     end
