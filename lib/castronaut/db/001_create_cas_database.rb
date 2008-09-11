@@ -24,7 +24,6 @@ class CreateCasDatabase < ActiveRecord::Migration
       t.column :ticket,           :string,    :null => false
       t.column :client_hostname,  :string,    :null => false
       t.column :username,         :string,    :null => false
-      t.column :extra_attributes, :text
 
       t.column :created_at,       :datetime,  :null => false
     end
