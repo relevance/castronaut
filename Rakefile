@@ -9,6 +9,8 @@ require 'spec/rake/spectask'
 require 'spec/rake/verify_rcov'
 require "fileutils"
 
+gem :flog
+
 CURRENT_VERSION = '0.1.0'
 $package_version = CURRENT_VERSION
 
@@ -49,27 +51,49 @@ end
 
 desc "Flog the code, keeping things under control by using a threshold"
 task :flog do
-  flog_report = "coverage/flog"
+  threshold = 135.0
   
-  threshold = 10.27
-  `flog app lib 2>/dev/null 1>#{flog_report}`
-  result = IO.popen('cat ' + 
-                     flog_report + 
-                     ' | grep "(" ' +
-                     ' | grep -v "main#none" | head -n 1'
-                    ).readlines.join('')
-  result =~ /\((.*)\)/
-  flog = $1.to_f
-  result =~ /^(.*):/
-  method = $1
+  report_path = File.expand_path(File.join(File.dirname(__FILE__), 'coverage'))
+  FileUtils.mkdir_p(report_path)
   
-  if flog > threshold
-    puts "FLOG failed for #{method} with score of #{flog} (threshold is #{threshold})."
-    exit(0)
-  end  
+  system "echo '<pre>' > #{report_path}/flog.html"
+  system "flog -a app/ lib/ >> #{report_path}/flog.html" do |ok, response|
+    unless ok
+      puts "Flog failed with exit status: #{response.exitstatus}"
+      exit 1
+    end
+  end
   
-  puts "FLOG passed with highest score being #{flog} for #{method} (threshold is #{threshold})."
-  exit(1)
+  flog_output = File.read("#{report_path}/flog.html")
+  output_lines = flog_output.split("\n")
+  
+  total_score = output_lines[1].split("=").last.strip.to_f
+  all_scores = output_lines.select {|line| line =~ /#/ }
+  all_scores.reject { }
+  total_methods = all_scores.length    
+  puts "Flog:"
+  puts "=" * 40
+  puts "  Average Score Per Method: #{total_score / total_methods}"
+
+  top_methods = all_scores.first(3)
+
+  threshold_failed = false
+  
+  top_methods.each_with_index do |score_with_name, index|
+    score_with_name =~ /\((.*)\)/
+    score = $1.to_f
+    score_with_name =~ /^(.*):/
+    method = $1
+    
+    puts "  #{index.next}) #{method} (#{score}) #{"(FAILED! Over threshold of #{threshold})" if score > threshold}"
+    unless threshold_failed
+      threshold_failed = score > threshold
+    end
+  end
+  
+  exit(1) if threshold_failed
+  
+  exit(0)
 end
 
 task :default => [:verify_coverage, :flog]
