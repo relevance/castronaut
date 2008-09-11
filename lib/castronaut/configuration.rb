@@ -51,17 +51,21 @@ module Castronaut
     def connect_activerecord
       create_directory('db')
 
-      ActiveRecord::Base.logger = Logger.new("#{log_directory}/castronaut.activerecord.log", "daily")
+      ActiveRecord::Base.logger = logger
       ActiveRecord::Base.colorize_logging = false
-
+      
       connect_cas_to_activerecord
       connect_adapter_to_activerecord
     end
 
     def connect_cas_to_activerecord
+      logger.debug "#{self.class} - Connecting to cas database using #{cas_database.inspect}"
       ActiveRecord::Base.establish_connection(cas_database)
 
-      ActiveRecord::Migrator.migrate('lib/castronaut/db', ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+      migration_path = File.expand_path(File.join(File.dirname(__FILE__), 'db'))
+
+      logger.debug "#{self.class} - Migrating to the latest version using migrations in #{migration_path}"
+      ActiveRecord::Migrator.migrate(migration_path, ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
     end
 
     def connect_adapter_to_activerecord
