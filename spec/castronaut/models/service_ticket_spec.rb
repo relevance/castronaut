@@ -199,7 +199,7 @@ describe Castronaut::Models::ServiceTicket do
           describe "when it is already expired it returns a ticket result" do
             
             before do
-              Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(stub_model(ServiceTicket, :expired? => true, :consumed? => false, :save! => nil))
+              Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(stub_model(ServiceTicket, :expired? => true, :consumed? => false, :consumed_at= => nil, :save! => nil))
             end
 
             it "with the ticket expired message" do
@@ -219,7 +219,7 @@ describe Castronaut::Models::ServiceTicket do
           describe "when it encounters a mismatched service it returns a ticket result" do
 
             before do
-              Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(stub_model(ServiceTicket, :expired? => false, :consumed? => false, :service => 'my service', :save! => nil))              
+              Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(stub_model(ServiceTicket, :expired? => false, :consumed? => false, :consumed_at= => nil, :service => 'my service', :save! => nil))              
             end
 
             it "with the service mismatch message" do
@@ -243,7 +243,7 @@ describe Castronaut::Models::ServiceTicket do
         describe "when ticket validation was successful and no branches were encountered" do
           
           before do
-            Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(mock('service ticket', :consumed? => false, :expired? => false, :null_object => true, :matches_service? => true))
+            Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(mock('service ticket', :consumed? => false, :expired? => false, :consumed_at= => nil, :null_object => true, :matches_service? => true))
           end
 
           it "returns a ticket result with a nil message" do
