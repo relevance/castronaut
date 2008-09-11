@@ -4,16 +4,13 @@
 # This file may be distributed under an MIT style license.
 # See MIT-LICENSE for details.
 
-begin
-  require 'rubygems'
-  require 'rake/gempackagetask'
-  require 'rake/testtask'
-  require 'rake/rdoctask'
-  require 'spec/rake/spectask'
-  require "fileutils"
-rescue Exception
-  nil
-end
+require 'rubygems'
+require 'rake/gempackagetask'
+require 'rake/testtask'
+require 'rake/rdoctask'
+require 'spec/rake/spectask'
+require 'spec/rake/verify_rcov'
+require "fileutils"
 
 CURRENT_VERSION = '0.1.0'
 $package_version = CURRENT_VERSION
@@ -34,26 +31,28 @@ rd = Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
 end
 
-if !defined?(Spec)
-  puts "spec and cruise targets require RSpec"
-else
-  desc "Run all examples with RCov"
-  Spec::Rake::SpecTask.new('coverage') do |t|
-    t.spec_files = FileList['spec/**/*.rb']
-    t.rcov = true
-    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library,lib/castronaut/db', '--text-report', '--sort', 'coverage']
-    t.spec_opts = ['-cfn']
-  end
 
-  desc "Run all examples"
-  Spec::Rake::SpecTask.new('spec') do |t|
-    t.spec_files = FileList['spec/**/*.rb']
-    t.rcov = false
-    t.spec_opts = ['-cfn']
-  end
+desc "Run all examples with RCov"
+Spec::Rake::SpecTask.new('specs_with_rcov') do |t|
+  t.spec_files = FileList['spec/**/*.rb']
+  t.rcov = true
+  t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library,lib/castronaut/db', '--sort', 'coverage']
+  t.spec_opts = ['-cfn']
 end
 
-task :default => [:coverage]
+desc "Run all examples"
+Spec::Rake::SpecTask.new('spec') do |t|
+  t.spec_files = FileList['spec/**/*.rb']
+  t.rcov = false
+  t.spec_opts = ['-cfn']
+end
+
+RCov::VerifyTask.new(:verify_coverage => :specs_with_rcov) do |t|
+  t.threshold = 100.0 # Make sure you have rcov 0.7 or higher!
+  t.index_html = 'coverage/index.html'
+end
+
+task :default => [:verify_coverage]
 
 namespace :ssl do
 
