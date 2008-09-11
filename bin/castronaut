@@ -18,9 +18,16 @@ OptionParser.new do |opts|
 end.parse!
 
 if options[:config_file]
-  Castronaut.config = Castronaut::Configuration.new(options[:config_file])
+  Castronaut.config = Castronaut::Configuration.load(options[:config_file])
 else
-  Castronaut.config = Castronaut::Configuration.new(File.join(File.dirname(__FILE__), '..', 'castronaut.yml'))
+  default_config = File.expand_path("./castronaut.yml")
+  
+  if File.exist?(default_config)
+    Castronaut.config = Castronaut::Configuration.load(default_config)
+  else
+    puts "Unable to locate configuration.  Currently looking at #{default_config}.  You can pass a custom configuration path by using the -C flag."
+    exit(0)
+  end
 end
 
 Sinatra::Application.default_options.merge!(

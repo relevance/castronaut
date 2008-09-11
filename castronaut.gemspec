@@ -1,19 +1,22 @@
-PKG_FILES = ["MIT-LICENSE", "Rakefile", "README.textile", "lib/castronaut.rb", "lib/version.rb", "doc/jamis.rb"]
+files = ["MIT-LICENSE", "Rakefile", "README.textile", "castronaut.example.yml", "castronaut.rb", "bin/castronaut"]
+files << Dir["lib/**/*.rb", "app/**/*.rb", "spec/**/*.rb", "vendor/**/*"]
 
 Gem::Specification.new do |s|
   s.name = 'castronaut'
   s.version = "0.1.0"
   s.summary = 'CAS Server'
   s.description = "CAS Server"
-  s.files = PKG_FILES
+  s.files = files.flatten
   s.require_path = 'lib'
-  s.has_rdoc = true
-  s.extra_rdoc_files = ['README.textile', 'MIT-LICENSE', 'CHANGELOG']
-  s.rdoc_options = ['--line-numbers', '--inline-source', '--main', 'README.textile', '--title', 'Castronaut']
+  s.has_rdoc = false
+  s.extra_rdoc_files = []
+  s.rdoc_options = []
+  s.bindir = 'bin'
+  s.default_executable = 'castronaut'
+  s.executables = ["castronaut"]
   s.author = 'Relevance Inc'
   s.email = 'opensource@thinkrelevance.com'
   s.homepage = 'http://github.com/relevance/castronaut'
-  
-  s.add_runtime_dependency 'activerecord'
-  s.add_development_dependency 'rspec'
+
+  s.add_dependency "activerecord", ">= 2.1.0"
 end
