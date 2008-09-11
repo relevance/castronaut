@@ -3,34 +3,14 @@
 
 # This file may be distributed under an MIT style license.
 # See MIT-LICENSE for details.
-
 require 'rubygems'
-require 'rake/gempackagetask'
-require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rake'
 require 'spec/rake/spectask'
 require 'spec/rake/verify_rcov'
 require "fileutils"
 
 CURRENT_VERSION = '0.1.0'
 $package_version = CURRENT_VERSION
-
-PKG_FILES = FileList['[A-Z]*',
-'lib/**/*.rb',
-'doc/**/*'
-]
-
-desc 'Generate documentation'
-rd = Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'html'
-  rdoc.template = 'doc/jamis.rb'
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Castronaut'
-  rdoc.options << '--line-numbers' << '--inline-source' <<  '--main' << 'README.textile' << '--title' << 'Castronaut'
-  rdoc.rdoc_files.include('README.textile', 'MIT-LICENSE', 'TODO', 'CHANGELOG')
-  rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
-end
-
 
 desc "Run all examples with RCov"
 Spec::Rake::SpecTask.new('specs_with_rcov') do |t|
@@ -48,11 +28,9 @@ Spec::Rake::SpecTask.new('spec') do |t|
 end
 
 RCov::VerifyTask.new(:verify_coverage => :specs_with_rcov) do |t|
-  t.threshold = 100.0 # Make sure you have rcov 0.7 or higher!
+  t.threshold = 100.0
   t.index_html = 'coverage/index.html'
 end
-
-task :default => [:verify_coverage]
 
 namespace :ssl do
 
@@ -68,3 +46,30 @@ namespace :ssl do
   end
 
 end
+
+desc "Flog the code, keeping things under control by using a threshold"
+task :flog do
+  flog_report = "coverage/flog"
+  
+  threshold = 10.27
+  `flog app lib 2>/dev/null 1>#{flog_report}`
+  result = IO.popen('cat ' + 
+                     flog_report + 
+                     ' | grep "(" ' +
+                     ' | grep -v "main#none" | head -n 1'
+                    ).readlines.join('')
+  result =~ /\((.*)\)/
+  flog = $1.to_f
+  result =~ /^(.*):/
+  method = $1
+  
+  if flog > threshold
+    puts "FLOG failed for #{method} with score of #{flog} (threshold is #{threshold})."
+    exit(0)
+  end  
+  
+  puts "FLOG passed with highest score being #{flog} for #{method} (threshold is #{threshold})."
+  exit(1)
+end
+
+task :default => [:verify_coverage, :flog]
