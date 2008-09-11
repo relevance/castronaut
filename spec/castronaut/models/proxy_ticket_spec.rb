@@ -7,7 +7,12 @@ describe Castronaut::Models::ProxyTicket do
   it "has a ticket prefix of PT" do
     ProxyTicket.new.ticket_prefix.should == 'PT'
   end
-
+  
+  it "builds a list of proxies by asking the proxy granting ticket for it's service ticket service" do
+    ProxyTicket.any_instance.stubs(:proxy_granting_ticket).returns(stub_everything(:service_ticket => stub_everything(:service => 'my service')))
+    ProxyTicket.new.proxies.should == ['my service']
+  end
+  
   describe "validating ticket" do
 
     it "validates the service and ticket using the service ticket validator" do

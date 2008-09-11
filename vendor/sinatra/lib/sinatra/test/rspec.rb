@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/unit'
-require 'test/spec'
+require 'spec/interop/test'
 
 class Test::Unit::TestCase
 

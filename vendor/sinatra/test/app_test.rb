@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/helper'
 
 context "Sinatra" do
-  
+
   setup do
     Sinatra.application = nil
   end
@@ -17,32 +17,32 @@ context "Sinatra" do
     get '/' do
       nil
     end
-    
+
     get_it '/'
     should.be.ok
     body.should == ''
   end
-  
+
   specify "handles events" do
     get '/:name' do
       'Hello ' + params["name"]
     end
-    
+
     get_it '/Blake'
-    
+
     should.be.ok
     body.should.equal 'Hello Blake'
   end
 
-  
+
   specify "handles splats" do
     get '/hi/*' do
       params["splat"].kind_of?(Array).should.equal true
       params["splat"].first
     end
-    
+
     get_it '/hi/Blake'
-    
+
     should.be.ok
     body.should.equal 'Blake'
   end
@@ -51,9 +51,9 @@ context "Sinatra" do
     get '/say/*/to/*' do
       params["splat"].join(' ')
     end
-    
+
     get_it '/say/hello/to/world'
-    
+
     should.be.ok
     body.should.equal 'hello world'
   end
@@ -62,14 +62,14 @@ context "Sinatra" do
     get '/say/*/to*/*' do
       params["splat"].join(' ')
     end
-    
+
     get_it '/say/hello/to/world'
-    
+
     should.be.ok
     body.should.equal 'hello  world' # second splat is empty
 
     get_it '/say/hello/tomy/world'
-    
+
     should.be.ok
     body.should.equal 'hello my world'
   end
@@ -93,20 +93,20 @@ context "Sinatra" do
     get '/' do
       redirect '/blake'
     end
-    
+
     get '/blake' do
       'Mizerany'
     end
-    
+
     get_it '/'
     should.be.redirection
     body.should.equal ''
-    
+
     follow!
     should.be.ok
     body.should.equal 'Mizerany'
   end
-  
+
   specify "renders a body with a redirect" do
     Sinatra::EventContext.any_instance.expects(:foo).returns('blah')
     get "/" do
@@ -129,35 +129,35 @@ context "Sinatra" do
     body.should.be.empty
   end
 
-  specify "body sets content and ends event" do
-    
+  specify "stop sets content and ends event" do
+
     Sinatra::EventContext.any_instance.expects(:foo).never
-    
+
     get '/set_body' do
       stop 'Hello!'
       stop 'World!'
       foo
     end
-    
+
     get_it '/set_body'
-    
+
     should.be.ok
     body.should.equal 'Hello!'
-    
+
   end
-  
+
   specify "should set status then call helper with a var" do
     Sinatra::EventContext.any_instance.expects(:foo).once.with(1).returns('bah!')
-    
+
     get '/set_body' do
       stop [404, [:foo, 1]]
     end
-    
+
     get_it '/set_body'
-    
+
     should.be.not_found
     body.should.equal 'bah!'
-    
+
   end
 
   specify "should easily set response Content-Type" do
@@ -235,16 +235,8 @@ context "Sinatra" do
     body.should.equal ''
   end
 
-  
-  specify "put'n with POST" do
-    put '/' do
-      'puted'
-    end
-    post_it '/', :_method => 'PUT'
-    assert_equal 'puted', body
-  end
 
-  specify "put'n wth PUT" do
+  specify "supports PUT" do
     put '/' do
       'puted'
     end
@@ -252,9 +244,17 @@ context "Sinatra" do
     assert_equal 'puted', body
   end
 
-  # Some Ajax libraries downcase the _method parameter value. Make 
+  specify "rewrites POSTs with _method param to PUT" do
+    put '/' do
+      'puted'
+    end
+    post_it '/', :_method => 'PUT'
+    assert_equal 'puted', body
+  end
+
+  # Some Ajax libraries downcase the _method parameter value. Make
   # sure we can handle that.
-  specify "put'n with POST and lowercase _method param" do
+  specify "rewrites POSTs with lowercase _method param to PUT" do
     put '/' do
       'puted'
     end
@@ -263,7 +263,7 @@ context "Sinatra" do
   end
 
   # Ignore any _method parameters specified in GET requests or on the query string in POST requests.
-  specify "not put'n with GET" do
+  specify "does not rewrite GETs with _method param to PUT" do
     get '/' do
       'getted'
     end
@@ -272,7 +272,7 @@ context "Sinatra" do
     body.should.equal 'getted'
   end
 
-  specify "_method query string parameter ignored on POST" do
+  specify "ignores _method query string parameter on non-POST requests" do
     post '/' do
       'posted'
     end
@@ -282,6 +282,18 @@ context "Sinatra" do
     post_it "/?_method=PUT"
     should.be.ok
     body.should.equal 'posted'
+  end
+
+  specify "does not read body if content type is not url encoded" do
+    post '/foo.xml' do
+      request.env['CONTENT_TYPE'].should.be == 'application/xml'
+      request.content_type.should.be == 'application/xml'
+      request.body.read
+    end
+
+    post_it '/foo.xml', '<foo></foo>', :content_type => 'application/xml'
+    @response.should.be.ok
+    @response.body.should.be == '<foo></foo>'
   end
 
 end
