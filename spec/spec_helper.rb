@@ -1,7 +1,7 @@
 require 'rubygems'
 
 gem :rspec, '>= 1.1.4'
-gem :mocha, '>= 0.9.0'
+gem :mocha, '>= 0.9.1'
 gem :activerecord, '>= 2.1.0'
 
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
