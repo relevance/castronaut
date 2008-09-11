@@ -42,8 +42,6 @@ module Castronaut
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_HOST'] || env['REMOTE_ADDR']
       end
 
-      # POSSIBLE SHARED ABOVE
-
       def username
         params['username'].to_s.strip
       end
@@ -57,7 +55,7 @@ module Castronaut
 
         login_ticket_validation_result = Castronaut::Models::LoginTicket.validate_ticket(@login_ticket)
 
-        if login_ticket_validation_result && login_ticket_validation_result.invalid?
+        if login_ticket_validation_result.invalid?
           messages << login_ticket_validation_result.message
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401

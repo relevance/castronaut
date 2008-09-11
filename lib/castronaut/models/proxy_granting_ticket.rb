@@ -42,7 +42,6 @@ module Castronaut
             return Castronaut::TicketResult.new(nil, "PGT callback server responded with a bad result code '#{http_response.code}'. PGT will not be stored.", "warn")
           end
         end
-        
       end
       
       def dispense_ticket

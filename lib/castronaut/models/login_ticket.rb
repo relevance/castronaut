@@ -30,8 +30,7 @@ module Castronaut
 
         login_ticket.consume!
 
-        # $LOG.info("Login ticket '#{ticket}' successfully validated")
-        nil
+        Castronaut::TicketResult.new(login_ticket, nil, "success")
       end
 
       def expired?
