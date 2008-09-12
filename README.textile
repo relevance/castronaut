@@ -1,3 +1,49 @@
 h1. Castronaut
 
-Changing the way you do CAS authentication since the year now.
+h2. Description
+
+Castronaut is an server implementation for the CAS (version 2.0) protocol.  It is currently a work in progress but should
+function properly with the latest release of Restfult Auth.  More authentication adapters coming soon.
+
+h2. Dependencies
+
+ActiveRecord >= 2.1.0
+
+h2. Usage
+
+@castronaut@
+
+or
+
+@castronaut -C /path/to/config@
+
+h2. Configuration
+
+Castronaut requires a configuration file to function.  Your configuration should be similar to the following:
+
+   organization_name: Foo Bar Baz Industries, LLC Inc. A division of Holdings Co.
+
+   environment: development
+   # The port the CAS webserver will start on
+   server_port: 4567
+
+   log_directory: log
+
+   log_level: Logger::DEBUG
+
+   ssl_enabled: false
+
+   cas_database:
+     adapter: sqlite3
+     database: db/cas.db
+     timeout: 5000
+
+   cas_adapter:
+     site_key: 03523your093023site0985225key098290here9
+     digest_stretches: 10
+     database:
+       adapter: sqlite3
+       database: db/cas_adapter.db
+       timeout: 5000
+
+
