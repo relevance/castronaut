@@ -1,0 +1,13 @@
+<% unless presenter.messages.empty? %>
+  <p class="flash"><%= presenter.messages.to_s %></p>
+<% end %>
+
+<div class="form container">
+      
+  <% if presenter.url %>
+    <p class="instruction">
+      The application you just logged out of has provided a link it would like you to follow. Please click here to access <a href="<%= presenter.url %>"><%= presenter.url %></a>.
+    </p>
+  <% end %> 
+
+</div>

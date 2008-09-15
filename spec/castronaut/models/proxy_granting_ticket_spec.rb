@@ -283,22 +283,20 @@ describe Castronaut::Models::ProxyGrantingTicket do
         end
         
       end
-      #      path += (uri.query.nil? || uri.query.empty? ? '?' : '&') + "pgtId=#{proxy_granting_ticket.ticket}&pgtIou=#{proxy_granting_ticket.iou}"
-      # 
-      #      http_response = http_connection.request_get(path)
-      # 
-      #      if http_response.code.to_i == 200
-      #        proxy_granting_ticket.save!
-      #        
-      #        return Castronaut::TicketResult.new(proxy_granting_ticket, "PGT generated for pgt_url '#{proxy_granting_ticket_url}': #{proxy_granting_ticket.inspect}", "success")
-      #      else
-      #        return Castronaut::TicketResult.new(nil, "PGT callback server responded with a bad result code '#{http_response.code}'. PGT will not be stored.", "warn")
-      #      end
-      #    end
-      
       
     end
-    
+   
+  end
+
+  describe "when processing a logout request" do
+
+    it "destroys the proxy granting ticket" do
+      proxy_granting_ticket = stub('proxy granting ticket')
+      ProxyGrantingTicket.stub!(:all).and_return([proxy_granting_ticket])
+      proxy_granting_ticket.should_receive(:destroy)
+      ProxyGrantingTicket.clean_up_proxy_granting_tickets_for('bob')
+    end
+
   end
 
 end

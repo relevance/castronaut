@@ -54,6 +54,16 @@ describe 'Castronaut Application Controller' do
 
   end
 
+  describe "requesting /logout via GET" do
+
+    it 'responds with status 200' do
+      get_it '/logout', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
+
+      should be_ok
+    end
+
+  end
+
   describe "requesting /serviceValidate via GET" do
 
     it 'responds with status 200' do

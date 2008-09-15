@@ -44,6 +44,12 @@ module Castronaut
         end
       end
       
+      def self.clean_up_proxy_granting_tickets_for(username)
+        proxy_granting_tickets = all(:include => :service_ticket, :conditions => ["service_tickets.username = ?", username])
+        proxy_granting_tickets.each { |pgt| pgt.destroy }
+        nil
+      end
+
       def dispense_ticket
         write_attribute(:ticket, "PGT-#{Castronaut::Utilities::RandomString.generate(60)}") if ticket.nil?
       end

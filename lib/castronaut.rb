@@ -10,6 +10,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'models
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'authentication_result'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'ticket_result'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'login'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'logout'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'process_login'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'service_validate'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presenters', 'proxy_validate'))

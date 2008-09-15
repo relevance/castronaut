@@ -16,6 +16,12 @@ post '/login' do
   @presenter.your_mission.call
 end
 
+get '/logout' do
+  @presenter = Castronaut::Presenters::Logout.new(self)
+  @presenter.represent!
+  @presenter.your_mission.call
+end
+
 get '/serviceValidate' do
   @presenter = Castronaut::Presenters::ServiceValidate.new(self)
   @presenter.represent!
