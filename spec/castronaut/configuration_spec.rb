@@ -79,7 +79,6 @@ describe Castronaut::Configuration do
     end
     
     it "exposes the logger at :logger" do
-      
       Castronaut::Configuration.load(@test_config_file).logger.should_not be_nil
     end
     
@@ -125,6 +124,40 @@ describe Castronaut::Configuration do
       
     end
 
+  end
+
+  describe "connecting the adapter to active record" do
+    
+    it "establishes a connection on the restful auth user" do
+      Castronaut::Adapters::RestfulAuthentication::User.should_receive(:establish_connection)
+      Castronaut::Configuration.load(@test_config_file)
+    end
+    
+    it "checks if there are any tables in the adapter db" do
+      Castronaut::Adapters::RestfulAuthentication::User.stub!(:establish_connection)
+      Castronaut::Adapters::RestfulAuthentication::User.connection.stub!(:tables).and_return(['table'])
+      Castronaut::Configuration.load(@test_config_file)
+    end
+
+    describe "when there are no tables on the adapter db" do
+      
+      it "notifies the user on STDERR" do
+        Castronaut::Adapters::RestfulAuthentication::User.stub!(:establish_connection)
+        Castronaut::Adapters::RestfulAuthentication::User.connection.stub!(:tables).and_return([])
+        Kernel.stub!(:exit)
+        STDERR.should_receive(:puts)
+        Castronaut::Configuration.load(@test_config_file)
+      end
+
+      it "does a system exit(0)" do
+        Castronaut::Adapters::RestfulAuthentication::User.stub!(:establish_connection)
+        Castronaut::Adapters::RestfulAuthentication::User.connection.stub!(:tables).and_return([])
+        Kernel.should_receive(:exit).with(0)
+        STDERR.stub!(:puts)
+        Castronaut::Configuration.load(@test_config_file)
+      end
+
+    end
   end
 
 end
