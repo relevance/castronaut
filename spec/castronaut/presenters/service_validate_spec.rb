@@ -34,8 +34,6 @@ describe Castronaut::Presenters::ServiceValidate do
     Castronaut::Presenters::ServiceValidate.new(@controller).proxy_granting_ticket_url.should == 'http://example.com/'
   end
 
-  it "gets :proxy_granting_ticket_iou from the proxy_granting_ticket_result when present"
-
   describe "represent!" do
 
     it "validates the service ticket" do
