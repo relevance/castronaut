@@ -2,13 +2,19 @@ require 'yaml'
 require 'logger'
 require 'fileutils'
 
+class Hodel3000CompliantLogger < Logger
+  def format_message(severity, timestamp, msg, progname)
+    "#{timestamp.strftime("%b %d %H:%M:%S")} [#{$PID}]: #{severity} - #{progname.gsub(/\n/, '').lstrip}\n"
+  end
+end
+
 module Castronaut
 
   class Configuration
     DefaultConfigFilePath = './castronaut.yml'
-    
+
     attr_accessor :config_file_path, :config_hash, :logger
-    
+
     def self.load(config_file_path = Castronaut::Configuration::DefaultConfigFilePath)
       config = Castronaut::Configuration.new
       config.config_file_path = config_file_path
@@ -19,15 +25,23 @@ module Castronaut
       config.connect_activerecord
       config
     end
-    
+
     def self.parse_yaml_config(file_path)
       YAML::load_file(file_path)
     end
 
     def parse_config_into_settings(config)
-      mod = Module.new { config.each_pair { |k,v| define_method(k) { v } } }
+      mod = Module.new do
+        config.each_pair do |k,v|
+          if self.methods.include?(k.to_s)
+            STDERR.puts "#{self.class} - Configuration tried to define #{k}, which was already defined."
+            next
+          end
+          define_method(k) { v }
+        end
+      end
       self.extend mod
-    end    
+    end
 
     def create_directory(dir)
       FileUtils.mkdir_p(dir) unless File.exist?(dir)
@@ -35,7 +49,7 @@ module Castronaut
 
     def setup_logger
       create_directory(log_directory)
-      log = Logger.new("#{log_directory}/castronaut.log", "daily")
+      log = Hodel3000CompliantLogger.new("#{log_directory}/castronaut.log", "daily")
       log.level = eval(log_level)
       log
     end
@@ -53,13 +67,13 @@ module Castronaut
 
       ActiveRecord::Base.logger = logger
       ActiveRecord::Base.colorize_logging = false
-      
+
       connect_cas_to_activerecord
       connect_adapter_to_activerecord
     end
 
     def connect_cas_to_activerecord
-      logger.debug "#{self.class} - Connecting to cas database using #{cas_database.inspect}"
+      logger.info "#{self.class} - Connecting to cas database using #{cas_database.inspect}"
       ActiveRecord::Base.establish_connection(cas_database)
 
       migration_path = File.expand_path(File.join(File.dirname(__FILE__), 'db'))
@@ -69,6 +83,7 @@ module Castronaut
     end
 
     def connect_adapter_to_activerecord
+      logger.info "#{self.class} - Connecting to cas adapter database using #{cas_adapter['database'].inspect}"
       Castronaut::Adapters::RestfulAuthentication::User.establish_connection(cas_adapter['database'])
 
       if Castronaut::Adapters::RestfulAuthentication::User.connection.tables.empty?
@@ -77,5 +92,5 @@ module Castronaut
       end
     end
   end
-  
+
 end

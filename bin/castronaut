@@ -12,6 +12,11 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: castronaut -C /path/to/config/file"
 
+  opts.on("-h", "--help") do
+    puts opts.banner
+    exit(1)
+  end
+
   opts.on("-C", "--config", "Config File") do |c|
     options[:config_file] = ARGV[0]
   end
@@ -21,7 +26,7 @@ if options[:config_file]
   Castronaut.config = Castronaut::Configuration.load(options[:config_file])
 else
   default_config = File.expand_path("./castronaut.yml")
-  
+
   if File.exist?(default_config)
     Castronaut.config = Castronaut::Configuration.load(default_config)
   else
@@ -37,8 +42,8 @@ Sinatra::Application.default_options.merge!(
   :logging => true
 )
 
-Castronaut.logger.debug("Sinatra - Loading app/config.rb")
+Castronaut.logger.info("Sinatra - Loading app/config.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'config.rb'))
 
-Castronaut.logger.debug("Sinatra - Loading app/application.rb")
+Castronaut.logger.info("Sinatra - Loading app/application.rb")
 load File.expand_path(File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 'application.rb'))
