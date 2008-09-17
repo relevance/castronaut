@@ -96,4 +96,10 @@ task :flog do
   exit(0)
 end
 
+desc 'Build and install the gem'
+task :gem do
+  sh 'gem build castronaut.gemspec'
+  sh 'sudo gem install castronaut*.gem'
+end
+
 task :default => [:verify_coverage]#, :flog]
