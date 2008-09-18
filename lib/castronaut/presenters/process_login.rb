@@ -47,7 +47,7 @@ module Castronaut
       end
 
       def password
-        params['password']
+        params['password'].to_s.strip
       end
 
       def represent!
