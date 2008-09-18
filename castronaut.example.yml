@@ -22,3 +22,6 @@ cas_adapter:
     adapter: sqlite3
     database: db/cas_adapter.db
     timeout: 5000
+
+extra_ui_actions:
+  'Forgot Password': http://example.com/
