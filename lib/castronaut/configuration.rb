@@ -89,6 +89,7 @@ module Castronaut
     def connect_adapter_to_activerecord
       logger.info "#{self.class} - Connecting to cas adapter database using #{cas_adapter['database'].inspect}"
       Castronaut::Adapters::RestfulAuthentication::User.establish_connection(cas_adapter['database'])
+      Castronaut::Adapters::RestfulAuthentication::User.logger = logger
 
       if Castronaut::Adapters::RestfulAuthentication::User.connection.tables.empty?
        STDERR.puts "#{self.class} - There are no tables in the given database.\nConfig details:\n#{config_hash.inspect}"

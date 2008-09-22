@@ -21,6 +21,15 @@ module Castronaut
           Digest::SHA1.hexdigest(args.flatten.join('--'))
         end
         
+        def self.find_by_login(login)
+          user = find(:first, :conditions => { :login => login })
+          return nil if user.nil?
+
+          if Castronaut.config.cas_adapter.has_key?('extra_authentication_conditions')
+            return find(:first, :conditions => ["login = ? AND #{Castronaut.config.cas_adapter['extra_authentication_conditions']}", login])
+          end
+        end
+
         def self.authenticate(username, password)
           if user = find_by_login(username)
             if user.crypted_password == Castronaut::Adapters::RestfulAuthentication::User.digest(password, user.salt)
