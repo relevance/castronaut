@@ -2,6 +2,7 @@
 log
 coverage
 TAGS
+tags
 db
 ssl
 castronaut.yml

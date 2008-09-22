@@ -23,5 +23,10 @@ cas_adapter:
     database: db/cas_adapter.db
     timeout: 5000
 
+# Uncomment these to enable authentication callbacks
+# callbacks:
+#  on_authentication_success: http://example.com/authentication/success
+#  on_authentication_failed: http://example.com/authentication/failed
+
 extra_ui_actions:
   'Forgot Password': http://example.com/

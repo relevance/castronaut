@@ -62,6 +62,10 @@ module Castronaut
       logger.debug "#{self.class} - initialization complete"
     end
 
+    def can_fire_callbacks?
+      config_hash.keys.include?('callbacks')      
+    end
+
     def connect_activerecord
       create_directory('db')
 
