@@ -79,6 +79,88 @@ describe Castronaut::Presenters::ProcessLogin do
 
   end
 
+  describe "callbacks" do
+    
+    it "fires an authentication success notice" do
+      process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+      process_login.should_receive(:fire_notice).with('success', {})
+      process_login.fire_authentication_success_notice({})
+    end
+
+    it "fires an authentication failure notice" do
+      process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+      process_login.should_receive(:fire_notice).with('failed', {})
+      process_login.fire_authentication_failure_notice({})
+    end
+
+
+    describe "fire notice" do
+      
+      it 'does nothing if there are no callbacks' do
+        Castronaut.config.stub!(:can_fire_callbacks?).and_return(false)
+        process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+        
+        Net::HTTP::Post.should_not_receive(:new)
+
+        process_login.fire_notice 'success', {}
+      end
+
+      it 'does nothing if there are callbacks but it can not find the requested one' do
+        Castronaut.config.stub!(:can_fire_callbacks?).and_return(true)
+        Castronaut.config.stub!(:callbacks).and_return({'poodles_can_fly' => 'weee.com'})
+
+        process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+        
+        Net::HTTP::Post.should_not_receive(:new)
+
+        process_login.fire_notice 'success', {}
+      end
+
+
+      it "parses the url using URI parse" do
+        Castronaut.config.stub!(:can_fire_callbacks?).and_return(true)
+        Castronaut.config.stub!(:callbacks).and_return({'on_authentication_success' => 'example.com'})
+        process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+        
+        Net::HTTP::Post.stub!(:new).and_return(stub_everything)
+        Net::HTTP.stub!(:new).and_return(stub_everything)
+
+        URI.should_receive(:parse).with('example.com').and_return(stub_everything)
+
+        process_login.fire_notice 'success', {}
+      end
+
+      it "builds a Net:HTTP:Post request with the given payload and status" do
+        Castronaut.config.stub!(:can_fire_callbacks?).and_return(true)
+        Castronaut.config.stub!(:callbacks).and_return({'on_authentication_success' => 'example.com'})
+        process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+        
+        URI.stub!(:parse).and_return(stub('uri', 'path' => 'uri-path', 'host' => 'example.com', 'port' => '2000'))
+
+        Net::HTTP::Post.should_receive(:new).with('uri-path').and_return(stub_everything)
+        Net::HTTP.stub!(:new).and_return(stub_everything)
+
+        process_login.fire_notice 'success', {}
+      end
+
+      it "sends the request using Net:HTTP.new" do
+        Castronaut.config.stub!(:can_fire_callbacks?).and_return(true)
+        Castronaut.config.stub!(:callbacks).and_return({'on_authentication_success' => 'example.com'})
+        process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
+        
+        Net::HTTP::Post.stub!(:new).and_return(stub_everything)
+        URI.stub!(:parse).and_return(stub_everything)
+
+        Net::HTTP.should_receive(:new).and_return(stub_everything)
+
+        process_login.fire_notice 'success', {}
+      end
+
+
+    end
+
+  end
+
   describe "represent!" do
 
     before(:each) do

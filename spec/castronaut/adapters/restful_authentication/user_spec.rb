@@ -23,6 +23,39 @@ describe Castronaut::Adapters::RestfulAuthentication::User do
     
   end
   
+  describe "find by login" do
+    
+    it "attempts to the find the first user with the given login" do
+      Castronaut::Adapters::RestfulAuthentication::User.should_receive(:find).with(:first, :conditions => { :login => 'bob' }).and_return(nil)
+      Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob')
+    end
+    
+    it "returns nil if no user is found with the given login" do
+      Castronaut::Adapters::RestfulAuthentication::User.stub!(:find).and_return(nil)
+      Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob').should be_nil
+    end
+    
+    describe "when the config has extra authentication conditions" do
+
+      before do
+        Castronaut.config.cas_adapter['extra_authentication_conditions'] = '1=2'
+      end
+
+      it "has the extra_authentication_conditions key" do
+        Castronaut.config.cas_adapter.has_key?('extra_authentication_conditions').should be_true
+        Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob')
+      end
+      
+      it "attempts to find the user with the extra authentication conditions" do
+        Castronaut::Adapters::RestfulAuthentication::User.should_receive(:find).and_return(stub('user'), nil)
+
+        Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob')
+      end
+      
+    end
+
+  end
+  
   describe "authenticate" do
     
     it "attempts to find the user by the username / login" do

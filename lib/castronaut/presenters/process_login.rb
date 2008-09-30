@@ -1,3 +1,6 @@
+require 'json'
+require 'json/add/rails'
+
 module Castronaut
   module Presenters
 
@@ -47,7 +50,29 @@ module Castronaut
       end
 
       def password
-        params['password']
+        params['password'].to_s.strip
+      end
+
+      def fire_notice(auth_status, payload)
+        return unless Castronaut.config.can_fire_callbacks?
+
+        callback_url = Castronaut.config.callbacks["on_authentication_#{auth_status}"]
+        return if callback_url.blank?
+
+        url = URI.parse(callback_url)
+       
+        request = Net::HTTP::Post.new(url.path)
+        request.set_form_data('cas_json_payload' => {'cas_status' => auth_status, 'cas_details' => payload}.to_json)
+     
+        Net::HTTP.new(url.host, url.port).start { |http| http.request(request) }
+      end
+
+      def fire_authentication_success_notice(details)
+        fire_notice 'success', details
+      end
+
+      def fire_authentication_failure_notice(details)
+        fire_notice 'failed', details
       end
 
       def represent!
@@ -76,6 +101,8 @@ module Castronaut
         authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password)
 
         if authentication_result.valid?
+          fire_authentication_success_notice('username' => username, 'client_host' => client_host, 'service' => service)
+
           ticket_granting_ticket = Castronaut::Models::TicketGrantingTicket.generate_for(username, client_host)
           cookies[:tgt] = ticket_granting_ticket.to_cookie
 
@@ -93,6 +120,7 @@ module Castronaut
           end
 
         else
+          fire_authentication_failure_notice('username' => username, 'client_host' => client_host, 'service' => service)
           messages << authentication_result.error_message
         end
 

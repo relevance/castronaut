@@ -150,7 +150,7 @@ describe Castronaut::Configuration do
 
     describe "when there are no tables on the adapter db" do
 
-      it "notifies the user on STDERR" do
+      xit "notifies the user on STDERR" do
         Castronaut::Adapters::RestfulAuthentication::User.stub!(:establish_connection)
         Castronaut::Adapters::RestfulAuthentication::User.connection.stub!(:tables).and_return([])
         Kernel.stub!(:exit)
@@ -158,7 +158,7 @@ describe Castronaut::Configuration do
         Castronaut::Configuration.load(@test_config_file)
       end
 
-      it "does a system exit(0)" do
+      xit "does a system exit(0)" do
         Castronaut::Adapters::RestfulAuthentication::User.stub!(:establish_connection)
         Castronaut::Adapters::RestfulAuthentication::User.connection.stub!(:tables).and_return([])
         Kernel.should_receive(:exit).with(0)

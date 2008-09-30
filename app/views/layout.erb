@@ -4,7 +4,8 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>CAS Authentication Server</title>
   <link href="/stylesheets/screen.css?<%= Time.now.usec %>" media="screen" rel="stylesheet" type="text/css" />
-
+  <script src="/javascripts/jquery.js?<%= Time.now.usec %>" type="text/javascript"></script>  
+  <script src="/javascripts/application.js?<%= Time.now.usec %>" type="text/javascript"></script>  
 </head>
 <body>
   <div class="container">
@@ -14,6 +15,11 @@
  
     <div id="content">
       <%= yield %>    
+      <% if Castronaut.config.respond_to?(:extra_ui_actions) %>
+        <% Castronaut.config.extra_ui_actions.each_pair do |text, href| %>
+          <a href="<%= href %>"><%= text %></a>
+        <% end %>
+      <% end %>
     </div>  
   </div>
 

@@ -3,7 +3,7 @@ files << Dir["lib/**/*", "app/**/*", "spec/**/*", "vendor/**/*"]
 
 Gem::Specification.new do |s|
   s.name = 'castronaut'
-  s.version = "0.2.5"
+  s.version = "0.3.6"
   s.summary = 'CAS Server'
   s.description = "CAS Server"
   s.files = files.flatten
@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/relevance/castronaut'
 
   s.add_dependency "activerecord", ">= 2.1.0"
+  s.add_dependency "json"
 end
