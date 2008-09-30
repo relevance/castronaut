@@ -35,6 +35,7 @@ describe 'Castronaut Application Controller' do
 
     it "sets the Expires header to '5 years ago in rfc2822 format'" do
       now = Time.parse("01/01/2008")
+      now.stub!(:-).and_return(now)
       Time.stub!(:now).and_return(now)
 
       get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
