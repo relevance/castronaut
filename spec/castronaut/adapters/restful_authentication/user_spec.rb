@@ -34,6 +34,11 @@ describe Castronaut::Adapters::RestfulAuthentication::User do
       Castronaut::Adapters::RestfulAuthentication::User.stub!(:find).and_return(nil)
       Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob').should be_nil
     end
+
+    it "returns the user found with the given login" do
+      Castronaut::Adapters::RestfulAuthentication::User.stub!(:find).and_return(user = stub('user'))
+      Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob').should == user
+    end
     
     describe "when the config has extra authentication conditions" do
 
@@ -47,11 +52,14 @@ describe Castronaut::Adapters::RestfulAuthentication::User do
       end
       
       it "attempts to find the user with the extra authentication conditions" do
-        Castronaut::Adapters::RestfulAuthentication::User.should_receive(:find).and_return(stub('user'), nil)
-
+        Castronaut::Adapters::RestfulAuthentication::User.should_receive(:find).with(:first, :conditions => ["login = ? AND 1=2", 'bob'])
         Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob')
       end
-      
+
+      it "returns the user found with the given login" do
+        Castronaut::Adapters::RestfulAuthentication::User.stub!(:find).and_return(user = stub('user'))
+        Castronaut::Adapters::RestfulAuthentication::User.find_by_login('bob').should == user
+      end
     end
 
   end
