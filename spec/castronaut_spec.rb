@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Castronaut do
   
   after(:all) do
-    Castronaut.config = Castronaut::Configuration.load(File.join(File.dirname(__FILE__), '..', 'castronaut.example.yml'))
+    Castronaut.config = Castronaut::Configuration.load(File.join(File.dirname(__FILE__), '..', 'config', 'castronaut.example.yml'))
   end
   
   it "exposes the config at Castronaut.config" do

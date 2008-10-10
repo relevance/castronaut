@@ -4,7 +4,7 @@ require 'yaml'
 describe Castronaut::Configuration do
 
   before(:all) do
-    @test_config_file = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'castronaut.example.yml'))
+    @test_config_file = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'config', 'castronaut.example.yml'))
   end
 
   describe "initialization" do

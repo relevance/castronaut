@@ -1,0 +1,13 @@
+--- 
+pid: /path/to/thin/pid/thin.pid 
+log: /path/to/thin/log/thin.log 
+timeout: 30 
+port: 4567 
+max_conns: 1024 
+chdir: /path/to/castronaut/files 
+rackup: /path/to/castronaut/config.ru 
+max_persistent_conns: 512 
+environment: production 
+address: 127.0.0.1 
+servers: 1 
+daemonize: true
