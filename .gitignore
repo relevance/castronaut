@@ -5,4 +5,4 @@ TAGS
 tags
 db
 ssl
-castronaut.yml
+config/castronaut.yml

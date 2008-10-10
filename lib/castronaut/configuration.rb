@@ -22,7 +22,7 @@ module Castronaut
       config.parse_config_into_settings(config.config_hash)
       config.logger = config.setup_logger
       config.debug_initialize if config.logger.debug?
-      config.connect_activerecord
+      config.connect_activerecord 
       config
     end
 
@@ -73,7 +73,7 @@ module Castronaut
       ActiveRecord::Base.colorize_logging = false
 
       connect_cas_to_activerecord
-      connect_adapter_to_activerecord
+      connect_adapter_to_activerecord if cas_adapter.has_key?('database')
     end
 
     def connect_cas_to_activerecord

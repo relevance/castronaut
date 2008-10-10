@@ -16,6 +16,7 @@ cas_database:
   timeout: 5000
 
 cas_adapter:
+  adapter: database
   site_key: 03523your093023site0985225key098290here9
   digest_stretches: 10
   database:
