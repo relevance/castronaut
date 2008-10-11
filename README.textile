@@ -58,8 +58,8 @@ Castronaut requires a configuration file to function.  Your configuration should
 
 h3. or if you are using LDAP
 
-Use this example if you are using LDAP as your authentication source
-cas_adapter:
+ Use this example if you are using LDAP as your authentication source
+ cas_adapter:
   adapter: ldap
   host: localhost
   port: 389
