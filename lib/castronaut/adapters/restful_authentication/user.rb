@@ -22,11 +22,10 @@ module Castronaut
         end
         
         def self.find_by_login(login)
-          user = find(:first, :conditions => { :login => login })
-          return nil if user.nil?
-
           if Castronaut.config.cas_adapter.has_key?('extra_authentication_conditions')
-            return find(:first, :conditions => ["login = ? AND #{Castronaut.config.cas_adapter['extra_authentication_conditions']}", login])
+            find(:first, :conditions => ["login = ? AND #{Castronaut.config.cas_adapter['extra_authentication_conditions']}", login])
+          else
+            find(:first, :conditions => { :login => login })
           end
         end
 

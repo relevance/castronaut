@@ -1,5 +1,9 @@
 #! /usr/bin/env ruby
 require "irb"
+Dir[File.dirname(__FILE__) + "/../vendor/**"].each do |dir| 
+  $LOAD_PATH.unshift(File.directory?(lib = "#{dir}/lib") ? lib : dir)
+end
+
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
 
 Castronaut.config = Castronaut::Configuration.load(File.join(File.dirname(__FILE__), '..', 'castronaut.yml'))

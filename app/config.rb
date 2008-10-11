@@ -10,5 +10,6 @@ configure do
   set_options :root => root,
               :views => views,
               :public => pub_dir,
-              :logging => true
+              :logging => true,
+              :raise_errors => true
 end
