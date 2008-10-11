@@ -22,25 +22,24 @@ h2. Configuration
 
 Castronaut requires a configuration file to function.  Your configuration should be similar to the following:
 
-organization_name: Foo Bar Baz Industries, LLC Inc. A division of Holdings Co.
+ organization_name: Foo Bar Baz Industries, LLC Inc. A division of Holdings Co.
 
-environment: development
+ environment: development
 
-# The port the CAS webserver will start on
-server_port: 4567
+ server_port: 4567
 
-log_directory: log
+ log_directory: log
 
-log_level: Logger::DEBUG
+ log_level: Logger::DEBUG
 
-ssl_enabled: false
+ ssl_enabled: false
 
-cas_database:
+ cas_database:
   adapter: sqlite3
   database: db/cas.db
   timeout: 5000
 
-cas_adapter:
+ cas_adapter:
   adapter: database
   site_key: 03523your093023site0985225key098290here9
   digest_stretches: 10
@@ -54,7 +53,7 @@ cas_adapter:
   on_authentication_success: http://example.com/authentication/success
   on_authentication_failed: http://example.com/authentication/failed
 
-extra_ui_actions:
+ extra_ui_actions:
   'Forgot Password': http://example.com/
 
 h3. or if you are using LDAP
