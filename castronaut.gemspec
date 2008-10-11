@@ -1,5 +1,5 @@
-files = ["MIT-LICENSE", "Rakefile", "README.textile", "castronaut.example.yml", "castronaut.rb", "bin/castronaut"]
-files << Dir["lib/**/*", "app/**/*", "spec/**/*", "vendor/**/*"]
+files = ["MIT-LICENSE", "Rakefile", "README.textile", "castronaut.rb", "bin/castronaut"]
+files << Dir["lib/**/*", "app/**/*", "spec/**/*", "config/**/*",  "vendor/**/*"]
 
 Gem::Specification.new do |s|
   s.name = 'castronaut'
