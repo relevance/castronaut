@@ -25,6 +25,7 @@ end.parse!
 if options[:config_file]
   Castronaut.config = Castronaut::Configuration.load(options[:config_file])
 else
+  $stderr.puts "No configuration file specified.  Deafaulting to ./config/castronaut.yml"
   default_config = File.expand_path("./config/castronaut.yml")
 
   if File.exist?(default_config)
