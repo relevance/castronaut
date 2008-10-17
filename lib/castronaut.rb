@@ -17,6 +17,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'presen
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'restful_authentication', 'adapter'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'restful_authentication', 'user'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'development', 'adapter'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'development', 'user'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'ldap', 'adapter'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'castronaut', 'adapters', 'ldap', 'user'))
 
