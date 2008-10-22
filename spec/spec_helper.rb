@@ -29,6 +29,20 @@ class CreateUsers < ActiveRecord::Migration
   ActiveRecord::Base.connection = old_connection
 end
 
+class CreateUsers < ActiveRecord::Migration
+  old_connection = ActiveRecord::Base.connection
+  ActiveRecord::Base.connection = Castronaut::Adapters::Development::User.connection
+
+  create_table "users", :force => true do |t|
+    t.column :login,                     :string, :limit => 40
+    t.column :name,                      :string, :limit => 100, :default => '', :null => true
+    t.column :password,                  :string
+  end
+  add_index :users, :login, :unique => true
+
+  ActiveRecord::Base.connection = old_connection
+end
+
 Spec::Runner.configure do |config|
   config.include Spec::Rails::Mocks
 end
