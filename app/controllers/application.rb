@@ -4,7 +4,6 @@ end
 
 get '/login' do
   no_cache
-
   @presenter = Castronaut::Presenters::Login.new(self)
   @presenter.represent!
   @presenter.your_mission.call

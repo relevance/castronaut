@@ -70,5 +70,20 @@ describe Castronaut::Models::TicketGrantingTicket do
     end
 
   end
+  
+  describe "general accessors" do
+    
+    it "returns the value of the ticket column for to_cookie" do
+      tgt = TicketGrantingTicket.new
+      tgt.stub!(:ticket).and_return("ticket")
+      tgt.to_cookie.should == "ticket"
+    end
+    
+    it "never expires" do
+      tgt = TicketGrantingTicket.new
+      tgt.expired?.should == false
+    end
+    
+  end
 
 end

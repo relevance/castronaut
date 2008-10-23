@@ -39,7 +39,11 @@ module Castronaut
       end
 
       def to_cookie
+        ticket
+      end
 
+      def expired? 
+        false
       end
 
     end

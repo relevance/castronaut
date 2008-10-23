@@ -29,6 +29,7 @@ module Castronaut
       end
 
       def ticket_generating_ticket_cookie
+        puts cookies.inspect
         cookies['tgt']
       end
 
