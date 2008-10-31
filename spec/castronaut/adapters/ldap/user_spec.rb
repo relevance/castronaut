@@ -11,6 +11,15 @@ describe Castronaut::Adapters::Ldap::User do
       Castronaut::Adapters::Ldap::User.authenticate('cn=bob, dc=example, dc=com', '1234')
     end
     
+    it "returns a failed to authenticate message when authentication fails" do
+      connection = stub_everything
+      Net::LDAP.stub!(:new).and_return(connection)
+      connection.stub!(:authenticate).and_return(nil)
+      connection.stub!(:bind).and_return(false)
+      result = Castronaut::Adapters::Ldap::User.authenticate('cn=bob, dc=example, dc=com', 'bad_password')
+      result.error_message.should == "Unable to authenticate the username cn=bob, dc=example, dc=com"
+    end
+  
   end
 
 end

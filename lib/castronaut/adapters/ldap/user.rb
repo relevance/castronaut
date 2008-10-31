@@ -28,7 +28,7 @@ module Castronaut
           if connection.bind
             return Castronaut::AuthenticationResult.new(username, nil)            
           else
-            puts "#{self} - Unable to authenticate username #{username} because #{connection.get_operation_result.message} : code #{connection.get_operation_result.code}"
+            Castronaut.config.logger.info "#{self} - Unable to authenticate username #{username} because #{connection.get_operation_result.message} : code #{connection.get_operation_result.code}"
             return Castronaut::AuthenticationResult.new(username, "Unable to authenticate the username #{username}")
           end
         end
