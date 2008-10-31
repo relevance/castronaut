@@ -29,6 +29,8 @@ describe Castronaut::Presenters::Logout do
   end
 
   describe "representing" do
+    
+    before { @controller.stub!(:delete_cookie) }
 
     it "attempts to find the ticket granting ticket using the ticket granting ticket cookie" do
       Castronaut::Models::TicketGrantingTicket.should_receive(:find_by_ticket).and_return(nil)
@@ -73,6 +75,11 @@ describe Castronaut::Presenters::Logout do
       Castronaut::Presenters::Logout.new(@controller).represent!.messages.should include("You have successfully logged out.")
     end
 
+    it "deletes the tgt cookie from the controller" do
+      @controller.should_receive(:delete_cookie).with('tgt')
+      Castronaut::Presenters::Logout.new(@controller).represent!
+    end
+    
   end
 end
 
