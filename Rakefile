@@ -20,7 +20,6 @@ Spec::Rake::SpecTask.new('specs_with_rcov') do |t|
   t.spec_files = FileList['spec/**/*.rb']
   t.rcov = true
   t.rcov_opts = ['--text-report', '--exclude', "spec,Library,lib/castronaut/db,#{ENV['GEM_HOME']}", '--sort', 'coverage']
-  t.spec_opts = ['-cfn']
 end
 
 desc "Run all examples"
