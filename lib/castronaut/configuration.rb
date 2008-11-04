@@ -34,7 +34,7 @@ module Castronaut
       mod = Module.new do
         config.each_pair do |k,v|
           if self.methods.include?(k.to_s)
-            STDERR.puts "#{self.class} - Configuration tried to define #{k}, which was already defined."
+            STDERR.puts "#{self.class} - Configuration tried to define #{k}, which was already defined." unless ENV["test"] == "true"
             next
           end
           define_method(k) { v }
