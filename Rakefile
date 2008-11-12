@@ -11,7 +11,7 @@ require "fileutils"
 
 gem :flog
 
-CURRENT_VERSION = '0.4.2'
+CURRENT_VERSION = '0.4.3'
 $package_version = CURRENT_VERSION
 
 desc "Run all examples with RCov"
@@ -30,7 +30,7 @@ Spec::Rake::SpecTask.new('spec') do |t|
 end
 
 RCov::VerifyTask.new(:verify_coverage => :specs_with_rcov) do |t|
-  t.threshold = 98.3
+  t.threshold = 98.5
   t.index_html = 'coverage/index.html'
 end
 

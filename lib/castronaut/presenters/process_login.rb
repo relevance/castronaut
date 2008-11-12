@@ -101,7 +101,7 @@ module Castronaut
         authentication_result = Castronaut::Adapters.selected_adapter.authenticate(username, password)
 
         if authentication_result.valid?
-          # fire_authentication_success_notice('username' => username, 'client_host' => client_host, 'service' => service)
+          fire_authentication_success_notice('username' => username, 'client_host' => client_host, 'service' => service)
 
           ticket_granting_ticket = Castronaut::Models::TicketGrantingTicket.generate_for(username, client_host)
           controller.set_cookie "tgt", ticket_granting_ticket.to_cookie
@@ -119,7 +119,7 @@ module Castronaut
           end
 
         else
-          # fire_authentication_failure_notice('username' => username, 'client_host' => client_host, 'service' => service)
+          fire_authentication_failure_notice('username' => username, 'client_host' => client_host, 'service' => service)
           messages << authentication_result.error_message
         end
 
