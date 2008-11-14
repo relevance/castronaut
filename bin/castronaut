@@ -40,7 +40,8 @@ Sinatra::Application.default_options.merge!(
   :env => Castronaut.config.environment.to_sym,
   :run => true,
   :raise_errors => true,
-  :logging => true
+  :logging => true,
+  :port => Castronaut.config.respond_to?(:server_port) ? Castronaut.config.server_port : Sinatra::Application.default_options[:port]
 )
 
 Castronaut.logger.info("Sinatra - Loading app/config.rb")
