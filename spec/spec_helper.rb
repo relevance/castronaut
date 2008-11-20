@@ -1,5 +1,6 @@
 require 'rubygems'
 
+gem 'sqlite3-ruby'
 gem :rspec, '>= 1.1.4'
 gem :activerecord, '>= 2.1.0'
 
