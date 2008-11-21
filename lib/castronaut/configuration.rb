@@ -63,7 +63,7 @@ module Castronaut
     end
 
     def can_fire_callbacks?
-      config_hash.keys.include?('callbacks')
+      config_hash.keys.include?('callbacks') && !config_hash['callbacks'].nil?
     end
 
     def connect_activerecord
