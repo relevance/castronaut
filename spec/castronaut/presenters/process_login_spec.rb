@@ -135,9 +135,9 @@ describe Castronaut::Presenters::ProcessLogin do
         Castronaut.config.stub!(:callbacks).and_return({'on_authentication_success' => 'example.com'})
         process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
         
-        URI.stub!(:parse).and_return(stub('uri', 'path' => 'uri-path', 'host' => 'example.com', 'port' => '2000'))
-
-        Net::HTTP::Post.should_receive(:new).with('uri-path').and_return(stub_everything)
+        URI.stub!(:parse).and_return(stub('uri', 'path' => 'uri-path', 'host' => 'example.com', 'port' => '2000', 'scheme'=> 'http'))
+        
+        Net::HTTP::Post.should_receive(:new).with('uri-path', { "port"=>"2000"}).and_return(stub_everything)
         Net::HTTP.stub!(:new).and_return(stub_everything)
 
         process_login.fire_notice 'success', {}

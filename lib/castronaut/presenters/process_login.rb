@@ -53,6 +53,18 @@ module Castronaut
         params['password'].to_s.strip
       end
 
+      def setup_http_request(url, auth_status, payload)
+        request = Net::HTTP::Post.new(url.path, { 'port' => url.port.to_s })
+        request.set_form_data('cas_json_payload' => {'cas_status' => auth_status, 'cas_details' => payload}.to_json)
+        request
+      end
+      
+      def setup_http_session(url)
+        session = Net::HTTP.new(url.host, url.port.to_s)
+        session.use_ssl = true if url.scheme == 'https'
+        session
+      end
+      
       def fire_notice(auth_status, payload)
         return unless Castronaut.config.can_fire_callbacks?
 
@@ -60,11 +72,10 @@ module Castronaut
         return if callback_url.blank?
 
         url = URI.parse(callback_url)
-       
-        request = Net::HTTP::Post.new(url.path)
-        request.set_form_data('cas_json_payload' => {'cas_status' => auth_status, 'cas_details' => payload}.to_json)
-     
-        Net::HTTP.new(url.host, url.port).start { |http| http.request(request) }
+        request = setup_http_request(url, auth_status, payload)
+        
+        session = setup_http_session(url)
+        session.start { |http| http.request(request) }
       end
 
       def fire_authentication_success_notice(details)

@@ -11,7 +11,7 @@ require "fileutils"
 
 gem :flog
 
-CURRENT_VERSION = '0.4.5'
+CURRENT_VERSION = '0.4.6'
 $package_version = CURRENT_VERSION
 
 desc "Run all examples with RCov"
