@@ -88,8 +88,13 @@ module Castronaut
 
     def connect_adapter_to_activerecord
       logger.info "#{self.class} - Connecting to cas adapter database using #{cas_adapter['database'].inspect}"
-      Castronaut::Adapters::RestfulAuthentication::User.establish_connection(cas_adapter['database'])
-      Castronaut::Adapters::RestfulAuthentication::User.logger = logger
+      if cas_adapter['adapter'] == "database"
+        Castronaut::Adapters::RestfulAuthentication::User.establish_connection(cas_adapter['database'])
+        Castronaut::Adapters::RestfulAuthentication::User.logger = logger
+      elsif cas_adapter['adapter'] == "development"
+        Castronaut::Adapters::Development::User.establish_connection(cas_adapter['database'])
+        Castronaut::Adapters::Development::User.logger = logger
+      end
 
       unless ENV["test"] == "true"
         if Castronaut::Adapters::RestfulAuthentication::User.connection.tables.empty?

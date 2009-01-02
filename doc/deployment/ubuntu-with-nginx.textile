@@ -1,0 +1,39 @@
+h1. Deploying Castronaut on Ubuntu with Nginx 
+
+h3. Getting Ubuntu Ready
+
+This document assumes that you are installing Castronaut using Ubuntu 8.10 server.  The details
+of these instructions should not change if you are using the desktop version.  
+
+1) Download and Install Ubuntu 8.10 server
+2) Run the updates
+   2.1) sudo apt-get update
+   2.2) sudo apt-get upgrade
+   2.3) sudo apt-get dist-upgrade
+   2.4) sudo reboot
+3) Install dependencies
+   3.1) sudo apt-get install build-essential libssl-dev libreadline5-dev zlib1g-dev sqlite3 libsqlite3-dev
+4) Install Ruby
+   4.1) wget ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.6-p287.tar.gz
+   4.2) tar xvzf ruby-1.8.6-p287.tar.gz
+   4.3) cd ruby-1.8.6-p287
+   4.4) ./configure --prefix=/usr/local --with-openssl-dir=/usr --with-readline-dir=/usr --with-zlib-dir=/usr
+   4.5) make
+   4.6) sudo make install
+5) Install Rubygems
+   5.1) wget http://rubyforge.org/frs/download.php/45905/rubygems-1.3.1.tgz
+   5.2) tar xvzf rubygems-1.3.1.tgz
+   5.3) cd rubygems-1.3.1
+   5.4) sudo ruby setup.rb
+6) Install gem dependencies
+   6.1) sudo gem install activerecord mongrel sqlite3-ruby ruby-net-ldap --no-rdoc --no-ri
+7) Install Castronaut
+   7.1) sudo gem install relevance-castronaut --source http://gems.github.com
+8) Test the install
+   8.1) castronaut --fresh .
+   8.2) castronaut --sampledb
+   8.3) castronaut -C castronaut.yml
+   8.4) Go to http://localhost:4567
+   8.5) Login with username admin and password admin
+
+
