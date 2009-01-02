@@ -79,7 +79,9 @@ module Castronaut
       end
 
       def fire_authentication_success_notice(details)
-        fire_notice 'success', details
+        Thread.new do
+          fire_notice 'success', details
+        end
       end
 
       def fire_authentication_failure_notice(details)
