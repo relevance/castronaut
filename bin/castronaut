@@ -20,6 +20,12 @@ OptionParser.new do |opts|
   opts.on("-C", "--config", "Config File") do |c|
     options[:config_file] = ARGV[0]
   end
+  
+  opts.on("-F", "--fresh", "Directory") do |f|
+    FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'config', 'castronaut.example.yml'), "#{ARGV[0]}/castronaut.yml")
+    puts "Writing config file to #{ARGV[0]}/castronaut.yml"
+    exit(1)
+  end
 end.parse!
 
 if options[:config_file]
