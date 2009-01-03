@@ -35,5 +35,10 @@ of these instructions should not change if you are using the desktop version.
    8.3) castronaut -C castronaut.yml
    8.4) Go to http://localhost:4567
    8.5) Login with username admin and password admin
-
+9) Install Nginx
+   9.1) sudo apt-get install nginx
+10) Setup Nginx proxy
+    10.1) cd /etc/nginx/sites-available
+    10.2) sudo castronaut --nginx .
+    10.3) sudo ln -s /etc/nginx/sites-available/castronaut.conf /etc/nginx/sites-enabled/castronaut.conf
 

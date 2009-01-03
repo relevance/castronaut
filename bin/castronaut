@@ -11,12 +11,10 @@ require 'optparse'
 options = {}
 OptionParser.new do |opts|
   opts.banner =  "Usage: castronaut [Options] {/path/to/config/file}\n"
-  opts.banner += "\t -C: \t\tStart castronaut using the specified config file.\n"
   opts.banner += "\t --config: \tStart castronaut using the specified config file.\n"  
-  opts.banner += "\t -F: \t\tWrite the castronaut default sample config file to the specified location.\n"
   opts.banner += "\t --fresh: \tWrite the castronaut default sample config file to the specified location.\n"
-  opts.banner += "\t -S: \t\tCreate a sample development database with users for testing.\n"
   opts.banner += "\t --sampledb: \tCreate a sample development database with users for testing.\n"  
+  opts.banner += "\t --nginx: \tWrite the sample nginx configuration file to the specified location.\n"
 
   opts.on("-h", "--help") do
     puts opts.banner
@@ -36,6 +34,12 @@ OptionParser.new do |opts|
   opts.on("-S", "--sampledb") do
     puts "Creating development database"
     Castronaut::Support::Sample.create_sample_database
+    exit(1)
+  end
+  
+  opts.on("-N", "--nginx") do
+    FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'config', 'nginx_vhost.conf'), "#{ARGV[0]}/castronaut.conf")
+    puts "Writing nginx vhost configuration file to #{ARGV[0]}/castronaut.conf"
     exit(1)
   end
 end.parse!
