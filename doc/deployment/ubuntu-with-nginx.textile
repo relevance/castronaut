@@ -41,4 +41,7 @@ of these instructions should not change if you are using the desktop version.
     10.1) cd /etc/nginx/sites-available
     10.2) sudo castronaut --nginx .
     10.3) sudo ln -s /etc/nginx/sites-available/castronaut.conf /etc/nginx/sites-enabled/castronaut.conf
+    10.4) sudo rm /etc/nginx/sites-enabled/default
+    10.5) sudo mkdir /var/log/nginx/castronaut
+    10.5) sudo /etc/init.d/nginx restart
 
