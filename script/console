@@ -6,6 +6,6 @@ end
 
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
 
-Castronaut.config = Castronaut::Configuration.load(File.join(File.dirname(__FILE__), '..', 'castronaut.yml'))
+Castronaut.config = Castronaut::Configuration.load(File.join(File.dirname(__FILE__), '..', 'config', 'castronaut.example.yml'))
 
 IRB.start(__FILE__)
