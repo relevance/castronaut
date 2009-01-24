@@ -67,9 +67,9 @@ context "Rack::Lint" do
       message.should.match(/url_scheme unknown/)
 
     lambda {
-      Rack::Lint.new(nil).call(env("REQUEST_METHOD" => "FUCKUP"))
+      Rack::Lint.new(nil).call(env("REQUEST_METHOD" => "FUCKUP?"))
     }.should.raise(Rack::Lint::LintError).
-      message.should.match(/REQUEST_METHOD unknown/)
+      message.should.match(/REQUEST_METHOD/)
 
     lambda {
       Rack::Lint.new(nil).call(env("SCRIPT_NAME" => "howdy"))
@@ -203,6 +203,47 @@ context "Rack::Lint" do
                      }).call(env({}))
     }.should.raise(Rack::Lint::LintError).
       message.should.match(/No Content-Type/)
+
+    [100, 101, 204, 304].each do |status|
+      lambda {
+        Rack::Lint.new(lambda { |env|
+                         [status, {"Content-type" => "text/plain", "Content-length" => "0"}, ""]
+                       }).call(env({}))
+      }.should.raise(Rack::Lint::LintError).
+        message.should.match(/Content-Type header found/)
+    end
+  end
+
+  specify "notices content-length errors" do
+    lambda {
+      Rack::Lint.new(lambda { |env|
+                       [200, {"Content-type" => "text/plain"}, ""]
+                     }).call(env({}))
+    }.should.raise(Rack::Lint::LintError).
+      message.should.match(/No Content-Length/)
+
+    [100, 101, 204, 304].each do |status|
+      lambda {
+        Rack::Lint.new(lambda { |env|
+                         [status, {"Content-length" => "0"}, ""]
+                       }).call(env({}))
+      }.should.raise(Rack::Lint::LintError).
+        message.should.match(/Content-Length header found/)
+    end
+
+    lambda {
+      Rack::Lint.new(lambda { |env|
+                       [200, {"Content-type" => "text/plain", "Content-Length" => "0", "Transfer-Encoding" => "chunked"}, ""]
+                     }).call(env({}))
+    }.should.raise(Rack::Lint::LintError).
+      message.should.match(/Content-Length header should not be used/)
+
+    lambda {
+      Rack::Lint.new(lambda { |env|
+                       [200, {"Content-type" => "text/plain", "Content-Length" => "1"}, ""]
+                     }).call(env({}))
+    }.should.raise(Rack::Lint::LintError).
+      message.should.match(/Content-Length header was 1, but should be 0/)
   end
 
   specify "notices body errors" do
@@ -300,4 +341,40 @@ context "Rack::Lint" do
       message.should.match(/close must not be called/)
   end
 
+  specify "notices HEAD errors" do
+    lambda {
+      Rack::Lint.new(lambda { |env|
+                       [200, {"Content-type" => "test/plain", "Content-length" => "3"}, []]
+                     }).call(env({"REQUEST_METHOD" => "HEAD"}))
+    }.should.not.raise
+
+    lambda {
+      Rack::Lint.new(lambda { |env|
+                       [200, {"Content-type" => "test/plain", "Content-length" => "3"}, "foo"]
+                     }).call(env({"REQUEST_METHOD" => "HEAD"}))
+    }.should.raise(Rack::Lint::LintError).
+      message.should.match(/body was given for HEAD/)
+  end
+end
+
+context "Rack::Lint::InputWrapper" do
+  specify "delegates :size to underlying IO object" do
+    class IOMock
+      def size
+        101
+      end
+    end
+
+    wrapper = Rack::Lint::InputWrapper.new(IOMock.new)
+    wrapper.size.should == 101
+  end
+
+  specify "delegates :rewind to underlying IO object" do
+    io = StringIO.new("123")
+    wrapper = Rack::Lint::InputWrapper.new(io)
+    wrapper.read.should == "123"
+    wrapper.read.should == ""
+    wrapper.rewind
+    wrapper.read.should == "123"
+  end
 end

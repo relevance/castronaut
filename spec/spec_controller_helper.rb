@@ -6,8 +6,8 @@ require 'rack'
 require 'sinatra'
 require 'sinatra/test/unit'
 
-Sinatra::Application.default_options.merge!(
-  :env => :test,
+Sinatra::Application.set(
+  :environment => :test,
   :run => false,
   :raise_errors => true,
   :logging => false

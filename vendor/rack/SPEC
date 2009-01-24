@@ -71,8 +71,7 @@ There are the following restrictions:
 * <tt>rack.url_scheme</tt> must either be +http+ or +https+.
 * There must be a valid input stream in <tt>rack.input</tt>.
 * There must be a valid error stream in <tt>rack.errors</tt>.
-* The <tt>REQUEST_METHOD</tt> must be one of +GET+, +POST+, +PUT+,
-  +DELETE+, +HEAD+, +OPTIONS+, +TRACE+.
+* The <tt>REQUEST_METHOD</tt> must be a valid token.
 * The <tt>SCRIPT_NAME</tt>, if non-empty, must start with <tt>/</tt>
 * The <tt>PATH_INFO</tt>, if non-empty, must start with <tt>/</tt>
 * The <tt>CONTENT_LENGTH</tt>, if given, must consist of digits only.
@@ -111,7 +110,11 @@ The values passed on #each must be Strings
 and not contain characters below 037.
 === The Content-Type
 There must be a <tt>Content-Type</tt>, except when the
-+Status+ is 204 or 304, in which case there must be none
++Status+ is 1xx, 204 or 304, in which case there must be none
+given.
+=== The Content-Length
+There must be a <tt>Content-Length</tt>, except when the
++Status+ is 1xx, 204 or 304, in which case there must be none
 given.
 === The Body
 The Body must respond to #each

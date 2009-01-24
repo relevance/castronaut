@@ -83,6 +83,26 @@ context "Rack::Request" do
     req.body.read.should.equal "foo=bar&quux=bla"
   end
 
+  specify "rewinds input after parsing POST data" do
+    input = StringIO.new("foo=bar&quux=bla")
+    req = Rack::Request.new \
+      Rack::MockRequest.env_for("/",
+        "CONTENT_TYPE" => 'application/x-www-form-urlencoded;foo=bar',
+        :input => input)
+    req.params.should.equal "foo" => "bar", "quux" => "bla"
+    input.read.should.equal "foo=bar&quux=bla"
+  end
+
+  specify "does not rewind unwindable CGI input" do
+    input = StringIO.new("foo=bar&quux=bla")
+    input.instance_eval "undef :rewind"
+    req = Rack::Request.new \
+      Rack::MockRequest.env_for("/",
+        "CONTENT_TYPE" => 'application/x-www-form-urlencoded;foo=bar',
+        :input => input)
+    req.params.should.equal "foo" => "bar", "quux" => "bla"
+  end
+
   specify "can get value by key from params with #[]" do
     req = Rack::Request.new \
       Rack::MockRequest.env_for("?foo=quux")
@@ -289,7 +309,7 @@ EOF
                       "CONTENT_TYPE" => "multipart/form-data, boundary=AaB03x",
                       "CONTENT_LENGTH" => input.size,
                       :input => input)
-    
+
     req.POST["huge"][:tempfile].size.should.equal 32768
     req.POST["mean"][:tempfile].size.should.equal 10
     req.POST["mean"][:tempfile].read.should.equal "--AaB03xha"
@@ -397,5 +417,30 @@ EOF
     parser.call("gzip;q=1.0, identity; q=0.5, *;q=0").should.equal([["gzip", 1.0], ["identity", 0.5], ["*", 0] ])
 
     lambda { parser.call("gzip ; q=1.0") }.should.raise(RuntimeError)
+  end
+
+  specify 'should provide ip information' do
+    app = lambda { |env|
+      request = Rack::Request.new(env)
+      response = Rack::Response.new
+      response.write request.ip
+      response.finish
+    }
+
+    mock = Rack::MockRequest.new(Rack::Lint.new(app))
+    res = mock.get '/', 'REMOTE_ADDR' => '123.123.123.123'
+    res.body.should == '123.123.123.123'
+
+    res = mock.get '/',
+      'REMOTE_ADDR' => '123.123.123.123',
+      'HTTP_X_FORWARDED_FOR' => '234.234.234.234'
+
+    res.body.should == '234.234.234.234'
+
+    res = mock.get '/',
+      'REMOTE_ADDR' => '123.123.123.123',
+      'HTTP_X_FORWARDED_FOR' => '234.234.234.234,212.212.212.212'
+
+    res.body.should == '212.212.212.212'
   end
 end

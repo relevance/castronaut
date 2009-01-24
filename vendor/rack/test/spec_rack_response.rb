@@ -1,4 +1,5 @@
 require 'test/spec'
+require 'set'
 
 require 'rack/response'
 
@@ -7,7 +8,7 @@ context "Rack::Response" do
     response = Rack::Response.new
     status, header, body = response.finish
     status.should.equal 200
-    header.should.equal "Content-Type" => "text/html"
+    header.should.equal "Content-Type" => "text/html", "Content-Length" => "0"
     body.each { |part|
       part.should.equal ""
     }
@@ -15,7 +16,7 @@ context "Rack::Response" do
     response = Rack::Response.new
     status, header, body = *response
     status.should.equal 200
-    header.should.equal "Content-Type" => "text/html"
+    header.should.equal "Content-Type" => "text/html", "Content-Length" => "0"
     body.each { |part|
       part.should.equal ""
     }
@@ -62,6 +63,12 @@ context "Rack::Response" do
       /expires=..., \d\d-...-\d\d\d\d \d\d:\d\d:\d\d .../)
   end
 
+  specify "can set secure cookies" do
+    response = Rack::Response.new
+    response.set_cookie "foo", {:value => "bar", :secure => true}
+    response["Set-Cookie"].should.equal "foo=bar; secure"
+  end
+
   specify "can delete cookies" do
     response = Rack::Response.new
     response.set_cookie "foo", "bar"
@@ -82,7 +89,7 @@ context "Rack::Response" do
     str = ""; body.each { |part| str << part }
     str.should.equal "foobar"
 
-    r = Rack::Response.new({"foo", "bar"})
+    r = Rack::Response.new(["foo", "bar"].to_set)
     r.write "foo"
     status, header, body = r.finish
     str = ""; body.each { |part| str << part }

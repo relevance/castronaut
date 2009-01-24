@@ -13,6 +13,13 @@ module Rack
   #    end
   #  }
   #
+  # Or
+  #
+  #  app = Rack::Builder.app do
+  #    use Rack::CommonLogger
+  #    lambda { |env| [200, {'Content-Type' => 'text/plain'}, 'OK'] }
+  #  end
+  #
   # +use+ adds a middleware to the stack, +run+ dispatches to an application.
   # You can use +map+ to construct a Rack::URLMap in a convenient way.
 
@@ -20,6 +27,10 @@ module Rack
     def initialize(&block)
       @ins = []
       instance_eval(&block) if block_given?
+    end
+
+    def self.app(&block)
+      self.new(&block).to_app
     end
 
     def use(middleware, *args, &block)
@@ -36,7 +47,7 @@ module Rack
 
     def map(path, &block)
       if @ins.last.kind_of? Hash
-        @ins.last[path] = Rack::Builder.new(&block).to_app
+        @ins.last[path] = self.class.new(&block).to_app
       else
         @ins << {}
         map(path, &block)

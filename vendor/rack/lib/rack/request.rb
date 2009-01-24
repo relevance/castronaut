@@ -113,6 +113,7 @@ module Rack
             Utils::Multipart.parse_multipart(env)
           @env["rack.request.form_vars"] = @env["rack.input"].read
           @env["rack.request.form_hash"] = Utils.parse_query(@env["rack.request.form_vars"])
+          @env["rack.input"].rewind if @env["rack.input"].respond_to?(:rewind)
         end
         @env["rack.request.form_hash"]
       else
@@ -122,7 +123,7 @@ module Rack
 
     # The union of GET and POST data.
     def params
-      self.GET.update(self.POST)
+      self.put? ? self.GET : self.GET.update(self.POST)
     rescue EOFError => e
       self.GET
     end
@@ -203,6 +204,14 @@ module Rack
         else
           raise "Invalid value for Accept-Encoding: #{part.inspect}"
         end
+      end
+    end
+
+    def ip
+      if addr = @env['HTTP_X_FORWARDED_FOR']
+        addr.split(',').last.strip
+      else
+        @env['REMOTE_ADDR']
       end
     end
   end

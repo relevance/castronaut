@@ -29,6 +29,8 @@
 * chains apps by default
 * has implicit #to_app
 * supports blocks on use
+* has explicit #to_app
+* apps are initialized once
 
 == Rack::Adapter::Camping
 * works with GET
@@ -55,12 +57,28 @@
 * should log to rack.errors by default
 * should log to anything with <<
 
+== Rack::ConditionalGet
+* should set a 304 status and truncate body when If-Modified-Since hits
+* should set a 304 status and truncate body when If-None-Match hits
+* should not affect non-GET/HEAD requests
+
+== Rack::ContentLength
+* sets Content-Length on String bodies if none is set
+* sets Content-Length on Array bodies if none is set
+* does not set Content-Length on variable length bodies
+* does not change Content-Length if it is already set
+* does not set Content-Length on 304 responses
+* does not set Content-Length when Transfer-Encoding is chunked
+
 == Rack::Deflater
 * should be able to deflate bodies that respond to each
 * should be able to deflate String bodies
 * should be able to gzip bodies that respond to each
 * should be able to fallback to no deflation
+* should be able to skip when there is no response entity body
 * should handle the lack of an acceptable encoding
+* should handle gzip response with Last-Modified header
+* should do nothing when no-transform Cache-Control directive present
 
 == Rack::Directory
 * serves directory indices
@@ -85,12 +103,19 @@
 * sets Last-Modified header
 * serves files with URL encoded filenames
 * does not allow directory traversal
+* does not allow directory traversal with encoded periods
 * 404s if it can't find the file
+* detects SystemCallErrors
 
 == Rack::Handler
 * has registered default handlers
 * should get unregistered handler by name
 * should register custom handler
+
+== Rack::Head
+* response (empty)
+* passes GET, POST, PUT, DELETE, OPTIONS, TRACE requests
+* removes body from HEAD requests
 
 == Rack::Lint
 * passes valid request
@@ -101,9 +126,15 @@
 * notices status errors
 * notices header errors
 * notices content-type errors
+* notices content-length errors
 * notices body errors
 * notices input handling errors
 * notices error handling errors
+* notices HEAD errors
+
+== Rack::Lint::InputWrapper
+* delegates :size to underlying IO object
+* delegates :rewind to underlying IO object
 
 == Rack::Lobster::LambdaLobster
 * should be a single lambda
@@ -114,6 +145,14 @@
 * should look like a lobster
 * should be flippable
 * should provide crashing for testing purposes
+
+== Rack::MethodOverride
+* should not affect GET requests
+* _method parameter should modify REQUEST_METHOD for POST requests
+* X-HTTP-Method-Override header should modify REQUEST_METHOD for POST requests
+* should not modify REQUEST_METHOD if the method is unknown
+* should not modify REQUEST_METHOD when _method is nil
+* should store the original REQUEST_METHOD prior to overriding
 
 == Rack::MockRequest
 * should return a MockResponse
@@ -143,6 +182,7 @@
 * should provide a .run that maps a hash
 * should provide a .run that maps a urlmap
 * should provide a .run that maps a urlmap restricting by host
+* should stream #each part of the response
 
 == Rack::Recursive
 * should allow for subrequests
@@ -156,6 +196,8 @@
 * can parse POST data
 * can parse POST data with explicit content type
 * does not parse POST data when media type is not form-data
+* rewinds input after parsing POST data
+* does not rewind unwindable CGI input
 * can get value by key from params with #[]
 * can set value to key on params with #[]=
 * values_at answers values by keys in order given
@@ -175,6 +217,7 @@
 * should work around buggy 1.8.* Tempfile equality
 * does conform to the Rack spec
 * should parse Accept-Encoding correctly
+* should provide ip information
 
 == Rack::Response
 * has sensible default values
@@ -182,6 +225,7 @@
 * can set and read headers
 * can set cookies
 * formats the Cookie expiration date accordingly to RFC 2109
+* can set secure cookies
 * can delete cookies
 * has a useful constructor
 * has a constructor that can take a block
@@ -195,6 +239,9 @@
 * loads from a cookie
 * survives broken cookies
 * barks on too big cookies
+* creates a new cookie with integrity hash
+* loads from a cookie wih integrity hash
+* ignores tampered with session cookies
 
 == Rack::Session::Memcache
 * startup (empty)
@@ -228,6 +275,15 @@
 * 404s if url root is known but it can't find the file
 * calls down the chain if url root is not known
 
+== Rack::Handler::Thin
+* should respond
+* should be a Thin
+* should have rack headers
+* should have CGI headers on GET
+* should have CGI headers on POST
+* should support HTTP auth
+* should set status
+
 == Rack::URLMap
 * dispatches paths correctly
 * dispatches hosts correctly
@@ -242,8 +298,10 @@
 * should figure out which encodings are acceptable
 
 == Rack::Utils::HeaderHash
-* should capitalize on all accesses
-* should capitalize correctly
+* should retain header case
+* should check existence of keys case insensitively
+* should merge case-insensitively
+* should overwrite case insensitively and assume the new key's case
 * should be converted to real Hash
 
 == Rack::Utils::Context
@@ -260,6 +318,7 @@
 * should have CGI headers on POST
 * should support HTTP auth
 * should set status
+* should correctly set cookies
 * should provide a .run
 
-197 specifications, 3 empty (886 requirements), 0 failures
+244 specifications, 4 empty (1004 requirements), 0 failures

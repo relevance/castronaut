@@ -7,9 +7,9 @@ configure do
   Castronaut.logger.debug "Sinatra Config - setting views path to #{views}"
   Castronaut.logger.debug "Sinatra Config - setting public path to #{pub_dir}"
 
-  set_options :root => root,
-              :views => views,
-              :public => pub_dir,
-              :logging => true,
-              :raise_errors => true
+  set :root => root,
+      :views => views,
+      :public => pub_dir,
+      :logging => true,
+      :raise_errors => true
 end

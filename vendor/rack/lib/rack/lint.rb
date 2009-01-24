@@ -29,8 +29,8 @@ module Rack
 
     ## A Rack application is an Ruby object (not a class) that
     ## responds to +call+.
-    def call(env=nil) 
-      dup._call(env) 
+    def call(env=nil)
+      dup._call(env)
     end
 
     def _call(env)
@@ -49,6 +49,7 @@ module Rack
       check_headers headers
       ## and the *body*.
       check_content_type status, headers
+      check_content_length status, headers, env
       [status, headers, self]
     end
 
@@ -162,11 +163,9 @@ module Rack
       ## * There must be a valid error stream in <tt>rack.errors</tt>.
       check_error env["rack.errors"]
 
-      ## * The <tt>REQUEST_METHOD</tt> must be one of +GET+, +POST+, +PUT+,
-      ##   +DELETE+, +HEAD+, +OPTIONS+, +TRACE+.
+      ## * The <tt>REQUEST_METHOD</tt> must be a valid token.
       assert("REQUEST_METHOD unknown: #{env["REQUEST_METHOD"]}") {
-        %w[GET POST PUT DELETE
-           HEAD OPTIONS TRACE].include?(env["REQUEST_METHOD"])
+        env["REQUEST_METHOD"] =~ /\A[0-9A-Za-z!\#$%&'*+.^_`|~-]+\z/
       }
 
       ## * The <tt>SCRIPT_NAME</tt>, if non-empty, must start with <tt>/</tt>
@@ -213,6 +212,14 @@ module Rack
 
       def initialize(input)
         @input = input
+      end
+
+      def size
+        @input.size
+      end
+
+      def rewind
+        @input.rewind
       end
 
       ## * +gets+ must be called without arguments and return a string,
@@ -350,18 +357,75 @@ module Rack
     def check_content_type(status, headers)
       headers.each { |key, value|
         ## There must be a <tt>Content-Type</tt>, except when the
-        ## +Status+ is 204 or 304, in which case there must be none
+        ## +Status+ is 1xx, 204 or 304, in which case there must be none
         ## given.
         if key.downcase == "content-type"
-          assert("Content-Type header found in #{status} response, not allowed"){
-            not [204, 304].include? status.to_i
+          assert("Content-Type header found in #{status} response, not allowed") {
+            not Rack::Utils::STATUS_WITH_NO_ENTITY_BODY.include? status.to_i
           }
           return
         end
       }
       assert("No Content-Type header found") {
-        [204, 304].include? status.to_i
+        Rack::Utils::STATUS_WITH_NO_ENTITY_BODY.include? status.to_i
       }
+    end
+
+    ## === The Content-Length
+    def check_content_length(status, headers, env)
+      chunked_response = false
+      headers.each { |key, value|
+        if key.downcase == 'transfer-encoding'
+          chunked_response = value.downcase != 'identity'
+        end
+      }
+
+      headers.each { |key, value|
+        if key.downcase == 'content-length'
+          ## There must be a <tt>Content-Length</tt>, except when the
+          ## +Status+ is 1xx, 204 or 304, in which case there must be none
+          ## given.
+          assert("Content-Length header found in #{status} response, not allowed") {
+            not Rack::Utils::STATUS_WITH_NO_ENTITY_BODY.include? status.to_i
+          }
+
+          assert('Content-Length header should not be used if body is chunked') {
+            not chunked_response
+          }
+
+          bytes = 0
+          string_body = true
+
+          @body.each { |part|
+            unless part.kind_of?(String)
+              string_body = false
+              break
+            end
+
+            bytes += (part.respond_to?(:bytesize) ? part.bytesize : part.size)
+          }
+
+          if env["REQUEST_METHOD"] == "HEAD"
+            assert("Response body was given for HEAD request, but should be empty") {
+              bytes == 0
+            }
+          else
+            if string_body
+              assert("Content-Length header was #{value}, but should be #{bytes}") {
+                value == bytes.to_s
+              }
+            end
+          end
+
+          return
+        end
+      }
+
+      if [ String, Array ].include?(@body.class) && !chunked_response
+        assert('No Content-Length header found') {
+          Rack::Utils::STATUS_WITH_NO_ENTITY_BODY.include? status.to_i
+        }
+      end
     end
 
     ## === The Body
