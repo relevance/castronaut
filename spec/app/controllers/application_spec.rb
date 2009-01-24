@@ -4,13 +4,10 @@ require 'spec/interop/test'
 describe 'Castronaut Application Controller' do
 
   describe "requesting / via GET" do
-
     it "redirects to /login" do
       get_it '/'
-
-      should be_redirection
+      @response.should be_redirection
     end
-
   end
 
   describe "requesting /login via GET" do
@@ -18,7 +15,7 @@ describe 'Castronaut Application Controller' do
     it "responds with status 200" do
       get_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
-      should be_ok
+      @response.should be_ok
     end
 
     it "sets the Pragma header to 'no-cache'" do
@@ -50,7 +47,7 @@ describe 'Castronaut Application Controller' do
     it 'responds with status 200' do
       post_it '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
-      should be_ok
+      @response.should be_ok
     end
 
   end
@@ -60,7 +57,7 @@ describe 'Castronaut Application Controller' do
     it 'responds with status 200' do
       get_it '/logout', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
-      should be_ok
+      @response.should be_ok
     end
 
   end
@@ -70,7 +67,7 @@ describe 'Castronaut Application Controller' do
     it 'responds with status 200' do
       get_it '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
-      should be_ok
+      @response.should be_ok
     end
 
   end
@@ -80,7 +77,7 @@ describe 'Castronaut Application Controller' do
     it 'responds with status 200' do
       get_it '/proxyValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
-      should be_ok
+      @response.should be_ok
     end
 
   end
