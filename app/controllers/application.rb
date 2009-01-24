@@ -34,8 +34,9 @@ get '/proxyValidate' do
 end
 
 private
-  def no_cache
-    headers 'Pragma' => 'no-cache',
-    'Cache-Control' => 'no-store',
-    'Expires' => (Time.now - 5.years).rfc2822
-  end
+
+def no_cache
+  headers 'Pragma' => 'no-cache',
+  'Cache-Control' => 'no-store',
+  'Expires' => (Time.now - 5.years).rfc2822
+end

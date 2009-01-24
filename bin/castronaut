@@ -56,8 +56,8 @@ unless Castronaut.config
   end
 end
 
-Sinatra::Application.default_options.merge!(
-  :env => Castronaut.config.environment.to_sym,
+Sinatra::Application.set(
+  :environment => Castronaut.config.environment.to_sym,
   :run => true,
   :raise_errors => true,
   :logging => true,

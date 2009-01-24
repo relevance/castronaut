@@ -9,10 +9,30 @@ require 'spec/rake/spectask'
 require 'spec/rake/verify_rcov'
 require "fileutils"
 
-gem :flog
-
-CURRENT_VERSION = '0.5.4'
-$package_version = CURRENT_VERSION
+begin
+  require 'jeweler'
+  files = ["MIT-LICENSE", "Rakefile", "README.textile", "castronaut.rb", "bin/castronaut"]
+  files << Dir["lib/**/*", "app/**/*", "spec/**/*", "config/**/*",  "vendor/**/*"]
+  
+  Jeweler::Tasks.new do |s|
+    s.name = "castronaut"
+    s.summary = "Your friendly, cigar smoking authentication dicator... From Space!"
+    s.description = "Your friendly, cigar smoking authentication dicator... From Space!"
+    s.homepage = "http://github.com/relevance/castronaut"
+    s.email = "aaron@thinkrelevance.com"
+    s.authors = ["Relevance, Inc."]
+    s.files = files.flatten
+    s.require_path = 'lib'
+    s.has_rdoc = false
+    s.extra_rdoc_files = []
+    s.rdoc_options = []
+    s.bindir = 'bin'
+    s.default_executable = 'castronaut'
+    s.executables = ["castronaut"]    
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+end
 
 desc "Run all examples with RCov"
 Spec::Rake::SpecTask.new('specs_with_rcov') do |t|
@@ -49,57 +69,4 @@ namespace :ssl do
 
 end
 
-desc "Flog the code, keeping things under control by using a threshold"
-task :flog do
-  threshold = 135.0
-
-  report_path = File.expand_path(File.join(File.dirname(__FILE__), 'coverage'))
-  FileUtils.mkdir_p(report_path)
-
-  system "echo '<pre>' > #{report_path}/flog.html"
-  system "flog -a app/ lib/ >> #{report_path}/flog.html" do |ok, response|
-    unless ok
-      puts "Flog failed with exit status: #{response.exitstatus}"
-      exit 1
-    end
-  end
-
-  flog_output = File.read("#{report_path}/flog.html")
-  output_lines = flog_output.split("\n")
-
-  total_score = output_lines[1].split("=").last.strip.to_f
-  all_scores = output_lines.select {|line| line =~ /#/ }
-  all_scores.reject { }
-  total_methods = all_scores.length
-  puts "Flog:"
-  puts "=" * 40
-  puts "  Average Score Per Method: #{total_score / total_methods}"
-
-  top_methods = all_scores.first(3)
-
-  threshold_failed = false
-
-  top_methods.each_with_index do |score_with_name, index|
-    score_with_name =~ /\((.*)\)/
-    score = $1.to_f
-    score_with_name =~ /^(.*):/
-    method = $1
-
-    puts "  #{index.next}) #{method} (#{score}) #{"(FAILED! Over threshold of #{threshold})" if score > threshold}"
-    unless threshold_failed
-      threshold_failed = score > threshold
-    end
-  end
-
-  exit(1) if threshold_failed
-
-  exit(0)
-end
-
-desc 'Build and install the gem'
-task :gem do
-  sh 'gem build castronaut.gemspec'
-  sh 'sudo gem install castronaut*.gem'
-end
-
-task :default => [:verify_coverage]#, :flog]
+task :default => [:verify_coverage]
