@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{castronaut}
-  s.version = "0.7.2"
+  s.version = "0.7.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Relevance, Inc."]
@@ -59,6 +59,9 @@ Gem::Specification.new do |s|
     "lib/castronaut/ticket_result.rb",
     "lib/castronaut/utilities/random_string.rb",
     "spec/app/controllers/application_spec.rb",
+    "spec/app/controllers/db/cas.db",
+    "spec/app/controllers/db/cas_adapter.db",
+    "spec/app/controllers/log/castronaut.log",
     "spec/castronaut/adapters/development/adapter_spec.rb",
     "spec/castronaut/adapters/development/user_spec.rb",
     "spec/castronaut/adapters/ldap/adapter_spec.rb",
