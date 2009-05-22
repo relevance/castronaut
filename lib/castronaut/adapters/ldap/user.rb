@@ -29,7 +29,7 @@ module Castronaut
             return Castronaut::AuthenticationResult.new(username, nil)            
           else
             Castronaut.config.logger.info "#{self} - Unable to authenticate username #{username} because #{connection.get_operation_result.message} : code #{connection.get_operation_result.code}"
-            return Castronaut::AuthenticationResult.new(username, "Unable to authenticate the username #{username}")
+            return Castronaut::AuthenticationResult.new(username, "Unable to authenticate")
           end
         end
 

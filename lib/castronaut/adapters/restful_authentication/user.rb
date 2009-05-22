@@ -35,11 +35,11 @@ module Castronaut
               Castronaut::AuthenticationResult.new(username, nil)
             else
               Castronaut.config.logger.info "#{self} - Unable to authenticate username #{username} due to invalid authentication information"
-              Castronaut::AuthenticationResult.new(username, "Unable to authenticate the username #{username}")
+              Castronaut::AuthenticationResult.new(username, "Unable to authenticate")
             end
           else
             Castronaut.config.logger.info "#{self} - Unable to authenticate username #{username} because it could not be found"
-            Castronaut::AuthenticationResult.new(username, "Unable to authenticate the username #{username}")
+            Castronaut::AuthenticationResult.new(username, "Unable to authenticate")
           end
         end
         
