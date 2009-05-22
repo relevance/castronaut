@@ -12,7 +12,7 @@ require "fileutils"
 begin
   require 'jeweler'
   files = ["MIT-LICENSE", "Rakefile", "README.textile", "castronaut.rb", "bin/castronaut"]
-  files << Dir["lib/**/*", "app/**/*", "spec/**/*", "config/**/*",  "vendor/**/*"]
+  files << Dir["lib/**/*", "app/**/*", "config/**/*",  "vendor/**/*"]
   
   Jeweler::Tasks.new do |s|
     s.name = "castronaut"
