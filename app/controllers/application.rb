@@ -36,7 +36,7 @@ end
 private
 
 def no_cache
-  headers 'Pragma' => 'no-cache',
+  response.headers.merge! 'Pragma' => 'no-cache',
   'Cache-Control' => 'no-store',
   'Expires' => (Time.now - 5.years).rfc2822
 end
