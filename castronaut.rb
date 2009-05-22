@@ -1,6 +1,6 @@
 require 'rubygems'
-gem :activerecord, '>= 2.1.0'
-gem :activesupport, '>= 2.1.0'
+gem 'activerecord', '>= 2.1.0'
+gem 'activesupport', '>= 2.1.0'
 
 require 'active_support'
 require 'activerecord'

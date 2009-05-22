@@ -85,7 +85,7 @@ describe Castronaut::Adapters::RestfulAuthentication::User do
       describe "when the credentials are invalid" do
         
         it "returns a Castronaut::AuthenticationResult object with the unable to authenticate user message" do
-          Castronaut::Adapters::RestfulAuthentication::User.stub!(:find_by_login).and_return(stub_everything(:crypted_password => "a", :salt => "b"))
+          Castronaut::Adapters::RestfulAuthentication::User.stub!(:find_by_login).and_return(stub(:crypted_password => "a", :salt => "b").as_null_object)
           Castronaut::Adapters::RestfulAuthentication::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate the username bob"
         end
         

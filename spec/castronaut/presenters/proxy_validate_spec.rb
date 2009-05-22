@@ -40,7 +40,7 @@ describe Castronaut::Presenters::ProxyValidate do
       it "validates the proxy ticket" do
         @controller.params['service'] = 'http://example.com'
         @controller.params['ticket'] = 'footicket'
-        Castronaut::Models::ProxyTicket.should_receive(:validate_ticket).with('http://example.com', 'footicket').and_return(stub_everything(:valid? => false))
+        Castronaut::Models::ProxyTicket.should_receive(:validate_ticket).with('http://example.com', 'footicket').and_return(stub(:valid? => false).as_null_object)
         Castronaut::Presenters::ProxyValidate.new(@controller).represent!
       end
 
@@ -52,7 +52,7 @@ describe Castronaut::Presenters::ProxyValidate do
         end
 
         it "exposes the proxy ticket result as :proxy_ticket_result" do
-          proxy_ticket_result = stub_everything(:valid? => false, :ticket_granting_ticket => stub_everything)
+          proxy_ticket_result = stub(:valid? => false, :ticket_granting_ticket => stub({}).as_null_object).as_null_object
           Castronaut::Models::ProxyTicket.should_receive(:validate_ticket).and_return(proxy_ticket_result)
           Castronaut::Presenters::ProxyValidate.new(@controller).represent!.proxy_ticket_result.should == proxy_ticket_result
         end
@@ -65,8 +65,8 @@ describe Castronaut::Presenters::ProxyValidate do
         describe "when the proxy ticket result is a proxy ticket" do
           
           it "creates an array of proxies from the proxy ticket results service ticket service" do
-            service_ticket = stub_everything(:service => 'http://myservice.com')
-            Castronaut::Models::ProxyTicket.should_receive(:validate_ticket).and_return(stub_everything(:valid? => true, :service_ticket => service_ticket))
+            service_ticket = stub(:service => 'http://myservice.com').as_null_object
+            Castronaut::Models::ProxyTicket.should_receive(:validate_ticket).and_return(stub(:valid? => true, :service_ticket => service_ticket).as_null_object)
             Castronaut::Presenters::ProxyValidate.new(@controller).represent!
           end
 
@@ -76,9 +76,9 @@ describe Castronaut::Presenters::ProxyValidate do
 
           it "attempts to generate a proxy granting ticket" do
             @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
-            Castronaut::Models::ProxyTicket.stub!(:validate_ticket).and_return(stub_everything(:valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub_everything))
+            Castronaut::Models::ProxyTicket.stub!(:validate_ticket).and_return(stub(:valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub({}).as_null_object).as_null_object)
 
-            Castronaut::Models::ProxyGrantingTicket.should_receive(:generate_ticket).with('http://proxygrantingticketurl', '10.1.1.1', anything).and_return(stub_everything)
+            Castronaut::Models::ProxyGrantingTicket.should_receive(:generate_ticket).with('http://proxygrantingticketurl', '10.1.1.1', anything).and_return(stub({}).as_null_object)
             Castronaut::Presenters::ProxyValidate.new(@controller).represent!
           end
 
@@ -86,7 +86,7 @@ describe Castronaut::Presenters::ProxyValidate do
 
             it "gets :proxy_granting_ticket_iou from the proxy_granting_ticket_result" do
               @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
-              Castronaut::Models::ProxyTicket.stub!(:validate_ticket).and_return(stub('ticket result', :proxies => nil, :valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub_everything))
+              Castronaut::Models::ProxyTicket.stub!(:validate_ticket).and_return(stub('ticket result', :proxies => nil, :valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub({}).as_null_object))
               Castronaut::Models::ProxyGrantingTicket.stub!(:generate_ticket).and_return(stub('proxy granting ticket result', :iou => 'pgtiou'))
 
               Castronaut::Presenters::ProxyValidate.new(@controller).represent!.proxy_granting_ticket_iou.should == 'pgtiou'

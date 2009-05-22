@@ -122,10 +122,10 @@ describe Castronaut::Presenters::ProcessLogin do
         Castronaut.config.stub!(:callbacks).and_return({'on_authentication_success' => 'example.com'})
         process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
         
-        Net::HTTP::Post.stub!(:new).and_return(stub_everything)
-        Net::HTTP.stub!(:new).and_return(stub_everything)
+        Net::HTTP::Post.stub!(:new).and_return(stub({}).as_null_object)
+        Net::HTTP.stub!(:new).and_return(stub({}).as_null_object)
 
-        URI.should_receive(:parse).with('example.com').and_return(stub_everything)
+        URI.should_receive(:parse).with('example.com').and_return(stub({}).as_null_object)
 
         process_login.fire_notice 'success', {}
       end
@@ -137,8 +137,8 @@ describe Castronaut::Presenters::ProcessLogin do
         
         URI.stub!(:parse).and_return(stub('uri', 'path' => 'uri-path', 'host' => 'example.com', 'port' => '2000', 'scheme'=> 'http'))
         
-        Net::HTTP::Post.should_receive(:new).with('uri-path', { "port"=>"2000"}).and_return(stub_everything)
-        Net::HTTP.stub!(:new).and_return(stub_everything)
+        Net::HTTP::Post.should_receive(:new).with('uri-path', { "port"=>"2000"}).and_return(stub({}).as_null_object)
+        Net::HTTP.stub!(:new).and_return(stub({}).as_null_object)
 
         process_login.fire_notice 'success', {}
       end
@@ -148,10 +148,10 @@ describe Castronaut::Presenters::ProcessLogin do
         Castronaut.config.stub!(:callbacks).and_return({'on_authentication_success' => 'example.com'})
         process_login = Castronaut::Presenters::ProcessLogin.new(@controller)
         
-        Net::HTTP::Post.stub!(:new).and_return(stub_everything)
-        URI.stub!(:parse).and_return(stub_everything)
+        Net::HTTP::Post.stub!(:new).and_return(stub({}).as_null_object)
+        URI.stub!(:parse).and_return(stub({}).as_null_object)
 
-        Net::HTTP.should_receive(:new).and_return(stub_everything)
+        Net::HTTP.should_receive(:new).and_return(stub({}).as_null_object)
 
         process_login.fire_notice 'success', {}
       end
@@ -213,7 +213,7 @@ describe Castronaut::Presenters::ProcessLogin do
       end
 
       it "attempts to authenticate" do
-        adapter = stub_everything(:authenticate => 'result')
+        adapter = stub(:authenticate => 'result').as_null_object
         Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
         adapter.should_receive(:authenticate).with('username', 'password').and_return(stub('auth result', :valid? => false, :error_message => 'nil'))
         Castronaut::Presenters::ProcessLogin.new(@controller).represent!
@@ -222,7 +222,7 @@ describe Castronaut::Presenters::ProcessLogin do
       describe "when authentication fails" do
 
         it "appends a could not authenticate message to the messages" do
-          adapter = stub_everything(:authenticate => 'result')
+          adapter = stub(:authenticate => 'result').as_null_object
           Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
           adapter.stub!(:authenticate).with('username', 'password').and_return(stub('auth result', :valid? => false, :error_message => "oggie boogie"))
           Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("oggie boogie")
@@ -233,21 +233,21 @@ describe Castronaut::Presenters::ProcessLogin do
       describe "when authentication succeeds" do
 
         before(:each) do
-          adapter = stub_everything(:authenticate => 'result')
+          adapter = stub(:authenticate => 'result').as_null_object
           Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
-          adapter.stub!(:authenticate).with('username', 'password').and_return(stub_everything(:valid? => true))
+          adapter.stub!(:authenticate).with('username', 'password').and_return(stub(:valid? => true).as_null_object)
           @controller.should_receive(:set_cookie)
         end
 
         it "generates a ticket granting ticket" do
-          Castronaut::Models::TicketGrantingTicket.should_receive(:generate_for).and_return(stub_everything(:to_cookie => 'cookie'))
+          Castronaut::Models::TicketGrantingTicket.should_receive(:generate_for).and_return(stub(:to_cookie => 'cookie').as_null_object)
           Castronaut::Presenters::ProcessLogin.new(@controller).represent!
         end
 
         describe "when the service is blank" do
 
           it "appends a successful login message to the messages" do
-            Castronaut::Models::TicketGrantingTicket.stub!(:generate_for).and_return(stub_everything(:to_cookie => 'cookie'))
+            Castronaut::Models::TicketGrantingTicket.stub!(:generate_for).and_return(stub(:to_cookie => 'cookie').as_null_object)
             Castronaut::Presenters::ProcessLogin.new(@controller).represent!.messages.should include("You have successfully logged in.")
           end
 
@@ -257,7 +257,7 @@ describe Castronaut::Presenters::ProcessLogin do
 
           before(:each) do
             @controller.stub!(:params).and_return({ 'username' => 'username', 'password' => 'password', 'service' => 'service'})
-            adapter = stub_everything(:authenticate => 'result')
+            adapter = stub(:authenticate => 'result').as_null_object
             Castronaut::Adapters.stub!(:selected_adapter).and_return(adapter)
             adapter.stub!(:authenticate).with('username', 'password').and_return(stub('auth result', :valid? => true))
             Castronaut::Models::TicketGrantingTicket.stub!(:generate_for).and_return(stub('ticket granting ticket', :to_cookie => 'cookie'))

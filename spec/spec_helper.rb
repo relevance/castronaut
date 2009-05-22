@@ -1,8 +1,8 @@
 require 'rubygems'
 
 gem 'sqlite3-ruby'
-gem :rspec, '>= 1.1.4'
-gem :activerecord, '>= 2.1.0'
+gem 'rspec', '>= 1.2.4'
+gem 'activerecord', '>= 2.1.0'
 
 require File.join(File.dirname(__FILE__), '..', 'castronaut')
 require File.join(File.dirname(__FILE__), 'spec_rails_mocks')

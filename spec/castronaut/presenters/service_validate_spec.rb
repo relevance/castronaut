@@ -39,7 +39,7 @@ describe Castronaut::Presenters::ServiceValidate do
     it "validates the service ticket" do
       @controller.params['service'] = 'http://example.com'
       @controller.params['ticket'] = 'footicket'
-      Castronaut::Models::ServiceTicket.should_receive(:validate_ticket).with('http://example.com', 'footicket').and_return(stub_everything(:valid? => false))
+      Castronaut::Models::ServiceTicket.should_receive(:validate_ticket).with('http://example.com', 'footicket').and_return(stub(:valid? => false).as_null_object)
       Castronaut::Presenters::ServiceValidate.new(@controller).represent!
     end
 
@@ -61,7 +61,7 @@ describe Castronaut::Presenters::ServiceValidate do
           @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
           Castronaut::Models::ServiceTicket.stub!(:validate_ticket).and_return(stub('ticket result', :valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub('tgt')))
 
-          Castronaut::Models::ProxyGrantingTicket.should_receive(:generate_ticket).with('http://proxygrantingticketurl', '10.1.1.1', 'service ticket').and_return(stub_everything)
+          Castronaut::Models::ProxyGrantingTicket.should_receive(:generate_ticket).with('http://proxygrantingticketurl', '10.1.1.1', 'service ticket').and_return(stub({}).as_null_object)
           Castronaut::Presenters::ServiceValidate.new(@controller).represent!
         end
 
@@ -69,7 +69,7 @@ describe Castronaut::Presenters::ServiceValidate do
 
           it "gets :proxy_granting_ticket_iou from the proxy_granting_ticket_result" do
             @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
-            Castronaut::Models::ServiceTicket.stub!(:validate_ticket).and_return(stub('ticket result', :proxies => nil, :valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub_everything))
+            Castronaut::Models::ServiceTicket.stub!(:validate_ticket).and_return(stub('ticket result', :proxies => nil, :valid? => true, :ticket => 'service ticket', :ticket_granting_ticket => stub({}).as_null_object))
             Castronaut::Models::ProxyGrantingTicket.stub!(:generate_ticket).and_return(stub('proxy granting ticket result', :iou => 'pgtiou'))
 
             Castronaut::Presenters::ServiceValidate.new(@controller).represent!.proxy_granting_ticket_iou.should == 'pgtiou'

@@ -70,7 +70,7 @@ describe Castronaut::Models::LoginTicket do
       describe "and it has already been consumed" do
         
         it "returns a ticket result with the AlreadyConsumedMessage" do
-          login_ticket = stub_everything(:consumed? => true)
+          login_ticket = stub(:consumed? => true).as_null_object
           
           Castronaut::TicketResult.should_receive(:new).with(login_ticket, LoginTicket::AlreadyConsumedMessage)
           LoginTicket.stub!(:find_by_ticket).and_return(login_ticket)

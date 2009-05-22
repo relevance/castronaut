@@ -47,7 +47,7 @@ describe Castronaut::Presenters::Login do
 
     it "validates the ticket generating ticket" do
       @controller.request.cookies['tgt'] = 'fake cookie'
-      Castronaut::Models::TicketGrantingTicket.should_receive(:validate_cookie).with('fake cookie').and_return(Castronaut::TicketResult.new(stub_everything))
+      Castronaut::Models::TicketGrantingTicket.should_receive(:validate_cookie).with('fake cookie').and_return(Castronaut::TicketResult.new(stub({}).as_null_object))
       Castronaut::Presenters::Login.new(@controller).represent!
     end
 
@@ -143,7 +143,7 @@ describe Castronaut::Presenters::Login do
   describe "login ticket generation" do
     
      it "generates a new login ticket when you call :login_ticket" do
-       Castronaut::Models::LoginTicket.should_receive(:generate_from).and_return(stub_everything(:ticket => 'ticket'))
+       Castronaut::Models::LoginTicket.should_receive(:generate_from).and_return(stub(:ticket => 'ticket').as_null_object)
        Castronaut::Presenters::Login.new(@controller).login_ticket
      end
 

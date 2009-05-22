@@ -69,7 +69,7 @@ describe Castronaut::Models::ProxyGrantingTicket do
     describe "when proxy granting ticket url is valid" do
  
       it "creates a new net/http connection to uri host and port" do
-        https = stub_everything
+        https = stub({}).as_null_object
         Net::HTTP.stub!(:new).and_return(https)  
         
         uri = stub('uri', :host => 'example.com', :port => 443, :path => '')
@@ -80,10 +80,10 @@ describe Castronaut::Models::ProxyGrantingTicket do
       end
       
       it "sets the new net/http connection to use ssl" do
-        https = stub_everything
+        https = stub({}).as_null_object
         Net::HTTP.stub!(:new).and_return(https)  
         
-        uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+        uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
         URI.stub!(:parse).and_return(uri)
         
         https.should_receive(:use_ssl=).with(true)
@@ -94,10 +94,10 @@ describe Castronaut::Models::ProxyGrantingTicket do
       end
       
       it "starts the connection" do
-        https = stub_everything
+        https = stub({}).as_null_object
         Net::HTTP.stub!(:new).and_return(https)  
         
-        uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+        uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
         URI.stub!(:parse).and_return(uri)
         
         https.should_receive(:start)
@@ -108,28 +108,28 @@ describe Castronaut::Models::ProxyGrantingTicket do
       describe "inside the http connection block" do
         
         it "intializes a new proxy granting ticket" do
-          https = stub_everything
+          https = stub({}).as_null_object
           Net::HTTP.stub!(:new).and_return(https)  
 
-          uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+          uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
           URI.stub!(:parse).and_return(uri)
           
-          https.stub!(:start).and_yield(stub_everything(:request_get => stub_everything))
+          https.stub!(:start).and_yield(stub(:request_get => stub({}).as_null_object).as_null_object)
           
-          ProxyGrantingTicket.should_receive(:new).with(:service_ticket => 'service ticket', :client_hostname => '10.1.1.1').and_return(stub_everything)
+          ProxyGrantingTicket.should_receive(:new).with(:service_ticket => 'service ticket', :client_hostname => '10.1.1.1').and_return(stub({}).as_null_object)
           ProxyGrantingTicket.generate_ticket('http://example.com', '10.1.1.1', 'service ticket')
         end
         
         it "dispenses a new ticket for the proxy granting ticket" do
-          https = stub_everything
+          https = stub({}).as_null_object
           Net::HTTP.stub!(:new).and_return(https)  
 
-          uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+          uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
           URI.stub!(:parse).and_return(uri)
 
-          https.stub!(:start).and_yield(stub_everything(:request_get => stub_everything))
+          https.stub!(:start).and_yield(stub(:request_get => stub({}).as_null_object).as_null_object)
 
-          proxy_granting_ticket = stub_everything
+          proxy_granting_ticket = stub({}).as_null_object
           proxy_granting_ticket.should_receive(:dispense_ticket)
           ProxyGrantingTicket.stub!(:new).and_return(proxy_granting_ticket)
           
@@ -137,15 +137,15 @@ describe Castronaut::Models::ProxyGrantingTicket do
         end
 
         it "dispenses a new iou for the proxy granting ticket" do
-          https = stub_everything
+          https = stub({}).as_null_object
           Net::HTTP.stub!(:new).and_return(https)  
 
-          uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+          uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
           URI.stub!(:parse).and_return(uri)
 
-          https.stub!(:start).and_yield(stub_everything(:request_get => stub_everything))
+          https.stub!(:start).and_yield(stub(:request_get => stub({}).as_null_object).as_null_object)
 
-          proxy_granting_ticket = stub_everything
+          proxy_granting_ticket = stub({}).as_null_object
           proxy_granting_ticket.should_receive(:dispense_iou)
           ProxyGrantingTicket.stub!(:new).and_return(proxy_granting_ticket)
           
@@ -153,13 +153,13 @@ describe Castronaut::Models::ProxyGrantingTicket do
         end
         
         it "requests the proxy granting ticket path via GET" do
-          https = stub_everything
+          https = stub({}).as_null_object
           Net::HTTP.stub!(:new).and_return(https)  
 
-          uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+          uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
           URI.stub!(:parse).and_return(uri)
           http_connection = mock('httpconnection')
-          http_connection.should_receive(:request_get).with('/?pgtId=PGT-RANDOM&pgtIou=PGTIOU-RANDOM').and_return(stub_everything)
+          http_connection.should_receive(:request_get).with('/?pgtId=PGT-RANDOM&pgtIou=PGTIOU-RANDOM').and_return(stub({}).as_null_object)
           
           https.stub!(:start).and_yield(http_connection)
           
@@ -171,7 +171,7 @@ describe Castronaut::Models::ProxyGrantingTicket do
         describe "when the request to the proxy granting ticket path is successful" do
           
           it "saves the proxy granting ticket" do
-            https = stub_everything
+            https = stub({}).as_null_object
             Net::HTTP.stub!(:new).and_return(https)  
 
             uri = stub('uri', :host => 'example.com', :port => 443, :path => '', :query => '')
@@ -191,7 +191,7 @@ describe Castronaut::Models::ProxyGrantingTicket do
           describe "returns a ticket result" do
             
             it "with the proxy granting ticket" do
-              https = stub_everything
+              https = stub({}).as_null_object
               Net::HTTP.stub!(:new).and_return(https)  
 
               uri = stub('uri', :host => 'example.com', :port => 443, :path => '', :query => '')
@@ -207,10 +207,10 @@ describe Castronaut::Models::ProxyGrantingTicket do
             end
             
             it "with a proxy granting ticket generated message" do
-              https = stub_everything
+              https = stub({}).as_null_object
               Net::HTTP.stub!(:new).and_return(https)  
 
-              uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+              uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
               URI.stub!(:parse).and_return(uri)
               http_connection = mock('httpconnection')
               http_connection.stub!(:request_get).and_return(stub('request', :code => '200'))
@@ -223,16 +223,16 @@ describe Castronaut::Models::ProxyGrantingTicket do
             end
             
             it "with a message category of success" do
-              https = stub_everything
+              https = stub({}).as_null_object
               Net::HTTP.stub!(:new).and_return(https)  
 
-              uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+              uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
               URI.stub!(:parse).and_return(uri)
               http_connection = mock('httpconnection')
               http_connection.stub!(:request_get).and_return(stub('request', :code => '200'))
               https.stub!(:start).and_yield(http_connection)
 
-              proxy_granting_ticket = stub_everything(:iou => 'PGTIOU-RANDOM', :ticket => 'PGT-RANDOM', :save! => true)
+              proxy_granting_ticket = stub(:iou => 'PGTIOU-RANDOM', :ticket => 'PGT-RANDOM', :save! => true).as_null_object
               ProxyGrantingTicket.stub!(:new).and_return(proxy_granting_ticket)              
               
               ProxyGrantingTicket.generate_ticket('http://example.com', '10.1.1.1', 'service ticket').message_category.should == 'success'
@@ -247,32 +247,32 @@ describe Castronaut::Models::ProxyGrantingTicket do
            describe "returns a ticket result" do
 
               it "with a proxy granting ticket generated message" do
-                https = stub_everything
+                https = stub({}).as_null_object
                 Net::HTTP.stub!(:new).and_return(https)  
 
-                uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+                uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
                 URI.stub!(:parse).and_return(uri)
                 http_connection = mock('httpconnection')
                 http_connection.stub!(:request_get).and_return(stub('request', :code => '404'))
                 https.stub!(:start).and_yield(http_connection)
 
-                proxy_granting_ticket = stub_everything(:iou => 'PGTIOU-RANDOM', :ticket => 'PGT-RANDOM', :save! => true, :inspect => 'PGT-INSPECT')
+                proxy_granting_ticket = stub(:iou => 'PGTIOU-RANDOM', :ticket => 'PGT-RANDOM', :save! => true, :inspect => 'PGT-INSPECT').as_null_object
                 ProxyGrantingTicket.stub!(:new).and_return(proxy_granting_ticket)              
 
                 ProxyGrantingTicket.generate_ticket('http://example.com', '10.1.1.1', 'service ticket').message.should == "PGT callback server responded with a bad result code '404'. PGT will not be stored."
               end
 
               it "with a message category of success" do
-                https = stub_everything
+                https = stub({}).as_null_object
                 Net::HTTP.stub!(:new).and_return(https)  
 
-                uri = stub_everything(:host => 'example.com', :port => 443, :path => '')
+                uri = stub(:host => 'example.com', :port => 443, :path => '').as_null_object
                 URI.stub!(:parse).and_return(uri)
                 http_connection = mock('httpconnection')
-                http_connection.stub!(:request_get).and_return(stub_everything(:code => '404'))
+                http_connection.stub!(:request_get).and_return(stub(:code => '404').as_null_object)
                 https.stub!(:start).and_yield(http_connection)
 
-                proxy_granting_ticket = stub_everything(:iou => 'PGTIOU-RANDOM', :ticket => 'PGT-RANDOM', :save! => true)
+                proxy_granting_ticket = stub(:iou => 'PGTIOU-RANDOM', :ticket => 'PGT-RANDOM', :save! => true).as_null_object
                 ProxyGrantingTicket.stub!(:new).and_return(proxy_granting_ticket)              
 
                 ProxyGrantingTicket.generate_ticket('http://example.com', '10.1.1.1', 'service ticket').message_category.should == 'warn'

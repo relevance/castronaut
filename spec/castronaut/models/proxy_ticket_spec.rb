@@ -16,7 +16,7 @@ describe Castronaut::Models::ProxyTicket do
   describe "validating ticket" do
 
     it "validates the service and ticket using the service ticket validator" do
-      ServiceTicket.should_receive(:validate_ticket).with('service', 'ticket', true).and_return(stub_everything(:invalid? => true))
+      ServiceTicket.should_receive(:validate_ticket).with('service', 'ticket', true).and_return(stub(:invalid? => true).as_null_object)
       ProxyTicket.validate_ticket('service', 'ticket')
     end
 

@@ -24,7 +24,7 @@ describe Castronaut::Presenters::Logout do
   end
 
   it "generates a new login ticket when you call :login_ticket" do
-    Castronaut::Models::LoginTicket.should_receive(:generate_from).and_return(stub_everything(:ticket => 'ticket'))
+    Castronaut::Models::LoginTicket.should_receive(:generate_from).and_return(stub(:ticket => 'ticket').as_null_object)
     Castronaut::Presenters::Logout.new(@controller).login_ticket
   end
 

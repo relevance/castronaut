@@ -11,7 +11,7 @@ describe Castronaut do
   end
   
   it "allows you to reset the config" do
-    new_config = stub_everything
+    new_config = stub({}).as_null_object
     original_config = Castronaut.config
     
     Castronaut.config.should_not == new_config
