@@ -32,7 +32,7 @@ describe Castronaut::Adapters::Development::User do
       
       it "returns a Castronaut::AuthenticationResult object with the unable to authenticate user message" do
         Castronaut::Adapters::Development::User.stub!(:find_by_login).and_return(nil)
-        Castronaut::Adapters::Development::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate the username bob"
+        Castronaut::Adapters::Development::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate"
       end
       
     end
@@ -43,7 +43,7 @@ describe Castronaut::Adapters::Development::User do
         
         it "returns a Castronaut::AuthenticationResult object with the unable to authenticate user message" do
           Castronaut::Adapters::Development::User.stub!(:find_by_login).and_return(stub(:crypted_password => "a", :salt => "b").as_null_object)
-          Castronaut::Adapters::Development::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate the username bob"
+          Castronaut::Adapters::Development::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate"
         end
         
       end

@@ -75,7 +75,7 @@ describe Castronaut::Adapters::RestfulAuthentication::User do
       
       it "returns a Castronaut::AuthenticationResult object with the unable to authenticate user message" do
         Castronaut::Adapters::RestfulAuthentication::User.stub!(:find_by_login).and_return(nil)
-        Castronaut::Adapters::RestfulAuthentication::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate the username bob"
+        Castronaut::Adapters::RestfulAuthentication::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate"
       end
       
     end
@@ -86,7 +86,7 @@ describe Castronaut::Adapters::RestfulAuthentication::User do
         
         it "returns a Castronaut::AuthenticationResult object with the unable to authenticate user message" do
           Castronaut::Adapters::RestfulAuthentication::User.stub!(:find_by_login).and_return(stub(:crypted_password => "a", :salt => "b").as_null_object)
-          Castronaut::Adapters::RestfulAuthentication::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate the username bob"
+          Castronaut::Adapters::RestfulAuthentication::User.authenticate('bob', '1234').error_message.should == "Unable to authenticate"
         end
         
       end

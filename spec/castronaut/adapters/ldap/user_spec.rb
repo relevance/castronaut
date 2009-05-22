@@ -17,7 +17,7 @@ describe Castronaut::Adapters::Ldap::User do
       connection.stub!(:authenticate).and_return(nil)
       connection.stub!(:bind).and_return(false)
       result = Castronaut::Adapters::Ldap::User.authenticate('cn=bob, dc=example, dc=com', 'bad_password')
-      result.error_message.should == "Unable to authenticate the username cn=bob, dc=example, dc=com"
+      result.error_message.should == "Unable to authenticate"
     end
   
   end
