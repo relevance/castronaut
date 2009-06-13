@@ -58,7 +58,7 @@ module Castronaut
           if service
             if !renewal && ticket_granting_ticket_result.valid?
               service_ticket = Castronaut::Models::ServiceTicket.generate_ticket_for(service, client_host, ticket_granting_ticket_result.ticket)
-            
+          
               if service_ticket.service_uri
                 return controller.redirect(service_ticket.service_uri, 303)
               else
@@ -68,11 +68,11 @@ module Castronaut
           elsif gateway?
             messages << "The server cannot fulfill this gateway request because no service parameter was given."
           end
-          
-        end
         
+        end
+      
         @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
-                
+              
         self
       end
     

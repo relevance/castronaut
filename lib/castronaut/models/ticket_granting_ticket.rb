@@ -1,3 +1,4 @@
+require 'ruby-prof'
 module Castronaut
   module Models
 
@@ -11,7 +12,11 @@ module Castronaut
       validates_presence_of :ticket, :username
 
       def self.validate_cookie(ticket_cookie)
-        Castronaut.logger.debug("#{self} - Validating ticket for #{ticket_cookie}")
+        RubyProf.profile do
+          Castronaut.logger.debug("#{self} - Validating ticket for #{ticket_cookie}")
+        end
+        printer = RubyProf::GraphPrinter.new(result)
+        printer.print(STDOUT,0)
 
         return Castronaut::TicketResult.new(nil, "No ticket granting ticket given", 'warn') if ticket_cookie.nil?
 
