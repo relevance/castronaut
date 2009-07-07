@@ -3,6 +3,7 @@
 
 # This file may be distributed under an MIT style license.
 # See MIT-LICENSE for details.
+
 require 'rubygems'
 require 'rake'
 require 'spec/rake/spectask'
