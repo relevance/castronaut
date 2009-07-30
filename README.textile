@@ -65,6 +65,3 @@ h3. or if you are using LDAP
   port: 389
   prefix: cn=
   base: dc=example, dc=com
-
-
-
